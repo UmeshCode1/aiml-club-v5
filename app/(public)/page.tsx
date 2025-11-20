@@ -240,7 +240,7 @@ function HeroSection() {
           <div className="flex items-center justify-center space-x-8 mb-8">
             <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-3 shadow-xl border border-gray-200 flex items-center justify-center">
               <Image
-                src="/images/logo aiml.png"
+                src="/.next/cache/images/2LUlc79fa0qCsBKxnbQtC-UjSa+u82j18d4Fq--E14Y=/60.1763643794135.knkEfNVjUvsraO7rggePBvKb8OIKmpiAJUAQ9Ksf1dY=.webp"
                 alt="AIML Club Logo"
                 fill
                 className="object-contain animate-float p-2"
@@ -249,7 +249,7 @@ function HeroSection() {
             </div>
             <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-3 shadow-xl border border-gray-200 flex items-center justify-center">
               <Image
-                src="/images/oriental college image_edited.jpg"
+                src="/Images/oriental college image_edited.jpg"
                 alt="OCT Logo"
                 fill
                 className="object-contain animate-float rounded-xl"
