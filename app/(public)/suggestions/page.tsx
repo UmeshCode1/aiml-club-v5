@@ -35,11 +35,16 @@ export default function SuggestionsPage() {
     setLoading(true);
 
     try {
+      // Runtime guard: collection ID must exist
+      if (!process.env.NEXT_PUBLIC_COLLECTION_SUGGESTIONS) {
+        throw new Error('Suggestions collection ID missing. Admin must set NEXT_PUBLIC_COLLECTION_SUGGESTIONS env var.');
+      }
+
       await suggestionService.create({
         content: formData.content,
         anonymous,
-        userName: anonymous ? undefined : formData.userName,
-        userEmail: anonymous ? undefined : formData.userEmail,
+        name: anonymous ? undefined : formData.userName,
+        email: anonymous ? undefined : formData.userEmail,
         status: 'Pending',
       });
 

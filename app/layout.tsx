@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   description: 'Official website of AI & Machine Learning Club at Oriental College of Technology, Bhopal. Innovate • Implement • Inspire',
   keywords: ['AI', 'Machine Learning', 'OCT', 'Bhopal', 'Student Club', 'Technology'],
   authors: [{ name: 'AIML Club OCT' }],
+  // Provides absolute base for Open Graph/Twitter image and canonical URL resolution
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aimlcluboct.vercel.app'),
   openGraph: {
     title: 'AI & ML Club - OCT Bhopal',
     description: 'Innovate • Implement • Inspire',

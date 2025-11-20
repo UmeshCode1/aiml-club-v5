@@ -258,8 +258,8 @@ export interface Suggestion {
   $id?: string;
   content: string;
   anonymous: boolean;
-  userName?: string;
-  userEmail?: string;
+  name?: string;
+  email?: string;
   response?: string;
   status: 'Pending' | 'Responded';
   $createdAt?: string;
