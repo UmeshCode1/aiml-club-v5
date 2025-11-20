@@ -134,9 +134,7 @@ function HeroBanner() {
   return (
     <div className="relative h-[340px] w-full rounded-3xl overflow-hidden shadow-xl shadow-primary-500/10 ring-1 ring-gray-200 dark:ring-gray-800">
       <Image
-        src={
-          '/images/club-banner.webp'
-        }
+        src={'/images/club-banner.jpg'}
         alt="AI & Machine Learning Club Banner"
         fill
         priority
