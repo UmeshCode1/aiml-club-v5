@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/appwrite';
+import { Client } from 'appwrite';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,26 +14,40 @@ export async function GET() {
     databaseSet: !!process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
   };
 
-  try {
-    const { databases } = await createAdminClient();
-    // Attempt a lightweight call: list first 1 collection (requires Database ID)
-    if (process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID) {
-      const collections = await databases.listCollections(process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID, undefined, 1);
-      result.database = { status: 'ok', collectionsDetected: collections.total };
-    } else {
-      result.database = { status: 'missing_database_id' };
+  // Lightweight Database existence check via REST (avoids SDK typings mismatch)
+  if (process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT && process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID && process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID && process.env.APPWRITE_API_KEY) {
+    try {
+      const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT.replace(/\/$/, '');
+      const url = `${endpoint}/databases/${process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID}`;
+      const res = await fetch(url, {
+        headers: {
+          'X-Appwrite-Project': process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
+          'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+        },
+        cache: 'no-store'
+      });
+      if (res.ok) {
+        const json = await res.json();
+        result.database = { status: 'ok', name: json.name, collectionsCount: json.collections }; // collections property may differ; best-effort
+      } else {
+        result.database = { status: 'error', httpStatus: res.status };
+      }
+    } catch (e) {
+      result.database = { status: 'error', message: (e as Error).message };
     }
-  } catch (e) {
-    result.database = { status: 'error', message: (e as Error).message };
+  } else {
+    result.database = { status: 'incomplete_config' };
   }
 
-  // Storage buckets check
+  // Simple client initialization test
   try {
-    const { databases } = await createAdminClient();
-    // Re-using databases client for a simple ping; real bucket listing would use Storage service
-    result.servicePing = { status: 'ok' };
+    const client = new Client()
+      .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+      .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!);
+    // If no exception thrown, mark OK
+    result.sdkInit = { status: 'ok' };
   } catch (e) {
-    result.servicePing = { status: 'error', message: (e as Error).message };
+    result.sdkInit = { status: 'error', message: (e as Error).message };
   }
 
   return NextResponse.json(result, { status: 200 });
