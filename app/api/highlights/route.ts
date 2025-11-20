@@ -23,8 +23,7 @@ export async function GET() {
           'X-Appwrite-Project': project,
           'Content-Type': 'application/json'
         },
-        next: { revalidate: 300 },
-        next: { revalidate: 0 }
+        next: { revalidate: 300 }
       }
     );
     
