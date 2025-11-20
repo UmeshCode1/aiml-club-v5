@@ -222,7 +222,18 @@ export default function HomePage() {
 // Hero Section Component
 function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-dark-bg dark:via-dark-card dark:to-dark-bg">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/hero-bg.jpg"
+          alt="AIML Club"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/85 via-primary-800/80 to-secondary-900/85 dark:from-dark-bg/90 dark:via-dark-card/85 dark:to-dark-bg/90" />
+      </div>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-float" />
@@ -238,44 +249,40 @@ function HeroSection() {
         >
           {/* Logos */}
           <div className="flex items-center justify-center space-x-8 mb-8">
-            <div className="relative w-24 h-24 md:w-32 md:h-32">
+            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white/90 dark:bg-white/95 rounded-2xl p-3 shadow-2xl">
               <Image
-                src="/images/logo aiml.png"
+                src="/images/logo.png"
                 alt="AIML Club Logo"
                 fill
-                unoptimized
-                className="object-contain animate-float"
-                onError={(e) => console.log('Logo load error')}
+                className="object-contain animate-float p-2"
               />
             </div>
-            <div className="relative w-24 h-24 md:w-32 md:h-32">
+            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white/90 dark:bg-white/95 rounded-2xl p-3 shadow-2xl">
               <Image
-                src="/images/oriental college image_edited.jpg"
+                src="/images/campus.jpg"
                 alt="OCT Logo"
                 fill
-                unoptimized
-                className="object-contain animate-float"
+                className="object-cover animate-float rounded-xl"
                 style={{ animationDelay: '0.5s' }}
-                onError={(e) => console.log('OCT logo load error')}
               />
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold">
-            <span className="gradient-text">AI & Machine Learning Club</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white">
+            <span className="bg-gradient-to-r from-primary-300 to-secondary-300 bg-clip-text text-transparent">AI & Machine Learning Club</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium">
+          <p className="text-xl md:text-2xl text-white/90 font-medium">
             Oriental College of Technology, Bhopal
           </p>
 
-          <p className="text-2xl md:text-3xl font-display italic text-gray-600 dark:text-gray-400">
-            <span className="text-primary-600">Innovate</span> •{' '}
-            <span className="text-secondary-600">Implement</span> •{' '}
+          <p className="text-2xl md:text-3xl font-display italic text-white/80">
+            <span className="text-primary-300">Innovate</span> •{' '}
+            <span className="text-secondary-300">Implement</span> •{' '}
             <span className="text-accent-neon">Inspire</span>
           </p>
 
-          <p className="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">
+          <p className="max-w-2xl mx-auto text-lg text-white/75">
             Join us in exploring the fascinating world of Artificial Intelligence
             and Machine Learning. Learn, build, and innovate together.
           </p>
@@ -313,7 +320,7 @@ function AboutSection() {
           transition={{ duration: 0.8 }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
         >
-          <div>
+          <div className="order-2 lg:order-1">
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
               About <span className="gradient-text">AIML Club</span>
             </h2>
@@ -336,28 +343,48 @@ function AboutSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <FeatureCard
-              icon={<Users className="w-8 h-8" />}
-              title="Community"
-              description="Join 200+ passionate members"
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="order-1 lg:order-2 relative h-96 rounded-2xl overflow-hidden shadow-2xl"
+          >
+            <Image
+              src="/images/team-photo.jpg"
+              alt="AIML Club Team"
+              fill
+              className="object-cover"
             />
-            <FeatureCard
-              icon={<Calendar className="w-8 h-8" />}
-              title="Events"
-              description="Regular workshops & seminars"
-            />
-            <FeatureCard
-              icon={<Trophy className="w-8 h-8" />}
-              title="Competitions"
-              description="Hackathons & challenges"
-            />
-            <FeatureCard
-              icon={<Sparkles className="w-8 h-8" />}
-              title="Innovation"
-              description="Real-world AI/ML projects"
-            />
-          </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-primary-900/50 to-transparent" />
+          </motion.div>
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12"
+        >
+          <FeatureCard
+            icon={<Users className="w-8 h-8" />}
+            title="Community"
+            description="Join 200+ passionate members"
+          />
+          <FeatureCard
+            icon={<Calendar className="w-8 h-8" />}
+            title="Events"
+            description="Regular workshops & seminars"
+          />
+          <FeatureCard
+            icon={<Trophy className="w-8 h-8" />}
+            title="Competitions"
+            description="Hackathons & challenges"
+          />
+          <FeatureCard
+            icon={<Sparkles className="w-8 h-8" />}
+            title="Innovation"
+            description="Real-world AI/ML projects"
+          />
         </motion.div>
       </div>
     </section>
