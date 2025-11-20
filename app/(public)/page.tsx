@@ -77,9 +77,6 @@ export default function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Stats Section */}
-      <StatsSection />
-
       {/* About Section */}
       <AboutSection />
 
