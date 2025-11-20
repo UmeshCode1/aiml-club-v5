@@ -340,7 +340,7 @@ function AboutSection() {
             className="order-1 lg:order-2 relative h-96 rounded-2xl overflow-hidden shadow-2xl"
           >
             <Image
-              src="/images/team-photo.jpg"
+              src="https://fra.cloud.appwrite.io/v1/storage/buckets/gallery/files/691e543617b671a23779/view?project=691e2b31003e6415bb4f&mode=admin"
               alt="AIML Club Team"
               fill
               className="object-cover"
