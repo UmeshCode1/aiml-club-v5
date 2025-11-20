@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
-import { suggestionService } from '@/lib/database';
+// We will submit via server API to allow public submissions
 import toast from 'react-hot-toast';
 
 export default function SuggestionsPage() {
@@ -35,18 +35,20 @@ export default function SuggestionsPage() {
     setLoading(true);
 
     try {
-      // Runtime guard: collection ID must exist
-      if (!process.env.NEXT_PUBLIC_COLLECTION_SUGGESTIONS) {
-        throw new Error('Suggestions collection ID missing. Admin must set NEXT_PUBLIC_COLLECTION_SUGGESTIONS env var.');
-      }
-
-      await suggestionService.create({
-        content: formData.content,
-        anonymous,
-        name: anonymous ? undefined : formData.userName,
-        email: anonymous ? undefined : formData.userEmail,
-        status: 'Pending',
+      const res = await fetch('/api/suggestions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: formData.content,
+          anonymous,
+          name: anonymous ? undefined : formData.userName,
+          email: anonymous ? undefined : formData.userEmail,
+        }),
       });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Failed to submit suggestion');
+      }
 
       toast.success('Suggestion submitted successfully!');
 
