@@ -1,0 +1,14 @@
+{
+  "projectId": "691e2b31003e6415bb4f",
+  "projectName": "AIML Club - Oriental College",
+  "sites": [
+    {
+      "name": "aiml-club-website",
+      "rootDirectory": ".",
+      "buildDirectory": ".next",
+      "buildCommand": "npm run build",
+      "installCommand": "npm install",
+      "framework": "nextjs"
+    }
+  ]
+}

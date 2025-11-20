@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_APPWRITE_ENDPOINT": "@appwrite-endpoint",
+    "NEXT_PUBLIC_APPWRITE_PROJECT_ID": "@appwrite-project-id",
+    "NEXT_PUBLIC_APPWRITE_DATABASE_ID": "@appwrite-database-id",
+    "APPWRITE_API_KEY": "@appwrite-api-key"
+  }
+}
