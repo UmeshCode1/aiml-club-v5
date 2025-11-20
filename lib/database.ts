@@ -92,7 +92,8 @@ export interface Highlight {
   excerpt: string;
   content: string;
   author: string;
-  createdAt: string;
+  date: string;
+  createdAt?: string;
   coverImage?: string;
   $createdAt?: string;
   $updatedAt?: string;
