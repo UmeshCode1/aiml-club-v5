@@ -222,22 +222,11 @@ export default function HomePage() {
 // Hero Section Component
 function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero-bg.jpg"
-          alt="AIML Club"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/85 via-primary-800/80 to-secondary-900/85 dark:from-dark-bg/90 dark:via-dark-card/85 dark:to-dark-bg/90" />
-      </div>
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-white">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary-200/30 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -249,40 +238,41 @@ function HeroSection() {
         >
           {/* Logos */}
           <div className="flex items-center justify-center space-x-8 mb-8">
-            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white/90 dark:bg-white/95 rounded-2xl p-3 shadow-2xl">
+            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-3 shadow-xl border border-gray-200 flex items-center justify-center">
               <Image
-                src="/images/logo.png"
+                src="/images/logo aiml.png"
                 alt="AIML Club Logo"
                 fill
                 className="object-contain animate-float p-2"
+                style={{ background: 'white' }}
               />
             </div>
-            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white/90 dark:bg-white/95 rounded-2xl p-3 shadow-2xl">
+            <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-3 shadow-xl border border-gray-200 flex items-center justify-center">
               <Image
-                src="/images/campus.jpg"
+                src="/images/oriental college image_edited.jpg"
                 alt="OCT Logo"
                 fill
-                className="object-cover animate-float rounded-xl"
-                style={{ animationDelay: '0.5s' }}
+                className="object-contain animate-float rounded-xl"
+                style={{ animationDelay: '0.5s', background: 'white' }}
               />
             </div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white">
-            <span className="bg-gradient-to-r from-primary-300 to-secondary-300 bg-clip-text text-transparent">AI & Machine Learning Club</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-gray-900">
+            <span className="bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">AI & Machine Learning Club</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-white/90 font-medium">
+          <p className="text-xl md:text-2xl text-gray-700 font-medium">
             Oriental College of Technology, Bhopal
           </p>
 
-          <p className="text-2xl md:text-3xl font-display italic text-white/80">
-            <span className="text-primary-300">Innovate</span> •{' '}
-            <span className="text-secondary-300">Implement</span> •{' '}
+          <p className="text-2xl md:text-3xl font-display italic text-gray-600">
+            <span className="text-primary-500">Innovate</span> •{' '}
+            <span className="text-secondary-500">Implement</span> •{' '}
             <span className="text-accent-neon">Inspire</span>
           </p>
 
-          <p className="max-w-2xl mx-auto text-lg text-white/75">
+          <p className="max-w-2xl mx-auto text-lg text-gray-600">
             Join us in exploring the fascinating world of Artificial Intelligence
             and Machine Learning. Learn, build, and innovate together.
           </p>

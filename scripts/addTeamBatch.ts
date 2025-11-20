@@ -81,7 +81,8 @@ async function add(member: Member) {
     console.log(`Skip (exists): ${member.name} (${member.role})`);
     return;
   }
-  const photo = member.image && member.image.length <= 50 ? member.image : '';
+  // Use member name (lowercase, no spaces) as photoId
+  const photoId = member.name ? member.name.replace(/\s+/g, '').toLowerCase() : '';
   const body = {
     documentId: 'unique()',
     data: {
@@ -89,7 +90,7 @@ async function add(member: Member) {
       role: member.role,
       category: mapCategory(member.role, member.category),
       bio: '',
-      photoId: photo,
+      photoId,
       instagram: '',
       linkedin: '',
       github: '',
@@ -99,7 +100,7 @@ async function add(member: Member) {
     permissions: ['read("any")']
   };
   await api('POST', `/databases/${databaseId}/collections/${teamCollectionId}/documents`, body);
-  console.log(`Added: ${member.name} (${member.role})`);
+  console.log(`Added: ${member.name} (${member.role}) with photoId: ${photoId}`);
 }
 
 (async () => {
