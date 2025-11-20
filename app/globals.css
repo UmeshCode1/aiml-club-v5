@@ -128,9 +128,51 @@
   }
 }
 
+@keyframes gradientXY {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
 /* Loading skeleton */
 .skeleton {
   @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+}
+
+.animate-gradient-xy {
+  animation: gradientXY 15s ease infinite;
+  background-size: 400% 400%;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s infinite;
 }
 
 /* Selection styles */

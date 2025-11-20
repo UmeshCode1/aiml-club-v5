@@ -123,10 +123,10 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-gray-800 hover:bg-primary-600 transition-colors"
+                  className="p-3 rounded-lg bg-gray-800 hover:bg-gradient-to-br hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary-500/50 group"
                   aria-label={social.name}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </a>
               ))}
             </div>
@@ -134,14 +134,16 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-8 border-t border-gray-700">
+        <div className="mt-12 pt-8 border-t border-gray-700/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} AI & ML Club - OCT. All rights reserved.
             </p>
-            <p className="text-gray-400 text-sm">
-              Made with ❤️ by AIML Club Tech Team
-            </p>
+            <div className="flex items-center gap-2 text-gray-400 text-sm">
+              <span>Made with</span>
+              <span className="text-red-500 animate-pulse-glow text-xl">❤️</span>
+              <span>by AIML Club Tech Team</span>
+            </div>
           </div>
         </div>
       </div>

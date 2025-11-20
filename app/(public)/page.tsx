@@ -77,11 +77,11 @@ export default function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* About Section */}
-      {/* <AboutSection /> */}
-
       {/* Stats Section */}
-      {/* <StatsSection /> */}
+      <StatsSection />
+
+      {/* About Section */}
+      <AboutSection />
 
       {/* Upcoming Events */}
       <section className="py-20 bg-gray-50 dark:bg-dark-card">
@@ -94,28 +94,51 @@ export default function HomePage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-card overflow-hidden">
-                    <div className="h-48 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900/50 dark:to-secondary-900/50 animate-shimmer" />
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: i * 0.1 }}
+                  className="animate-pulse"
+                >
+                  <div className="rounded-xl border border-gray-200 dark:border-dark-border bg-white dark:bg-dark-card overflow-hidden shadow-lg">
+                    <div className="h-48 bg-gradient-to-br from-primary-200 via-secondary-200 to-primary-300 dark:from-primary-900/50 dark:via-secondary-900/50 dark:to-primary-800/50 animate-gradient-xy" />
                     <div className="p-6 space-y-3">
-                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-                      <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded" />
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
+                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 animate-pulse" style={{ animationDelay: '0.1s' }} />
+                      <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" style={{ animationDelay: '0.2s' }} />
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           ) : upcomingEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
               {upcomingEvents.map((event, index) => (
                 <EventCard key={event.$id} event={event} index={index} />
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <p className="text-center text-gray-600 dark:text-gray-400">
-              No upcoming events at the moment. Stay tuned!
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-12"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                <Calendar className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                No upcoming events at the moment.
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                Check back soon for exciting workshops and events!
+              </p>
+            </motion.div>
           )}
 
           <div className="text-center mt-12">
@@ -150,7 +173,12 @@ export default function HomePage() {
               ))}
             </div>
           ) : highlights.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
               {highlights.map((highlight, index) => (
                 <HighlightCard
                   key={highlight.$id}
@@ -158,11 +186,23 @@ export default function HomePage() {
                   index={index}
                 />
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <p className="text-center text-gray-600 dark:text-gray-400">
-              No highlights available yet.
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-12"
+            >
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                <Sparkles className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                No highlights available yet.
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                We'll share exciting updates soon!
+              </p>
+            </motion.div>
           )}
 
           <div className="text-center mt-12">

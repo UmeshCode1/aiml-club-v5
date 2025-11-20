@@ -14,7 +14,7 @@ export async function GET() {
           'X-Appwrite-Project': project,
           'Content-Type': 'application/json'
         },
-        cache: 'no-store'
+        next: { revalidate: 600 }
       }
     );
     

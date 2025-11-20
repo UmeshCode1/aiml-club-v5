@@ -15,7 +15,7 @@ export async function GET() {
           'X-Appwrite-Project': project,
           'Content-Type': 'application/json'
         },
-        cache: 'no-store'
+        next: { revalidate: 600 }
       }
     );
     
@@ -46,5 +46,4 @@ export async function GET() {
   }
 }
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 600; // Cache for 10 minutes

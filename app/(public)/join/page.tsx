@@ -274,12 +274,17 @@ export default function JoinPage() {
 
 function BenefitCard({ icon, title, description }: any) {
   return (
-    <Card className="p-6 text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 mb-4">
-        {icon}
-      </div>
-      <h3 className="font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
-    </Card>
+    <motion.div
+      whileHover={{ scale: 1.05, y: -5 }}
+      transition={{ duration: 0.2 }}
+    >
+      <Card className="p-6 text-center h-full hover:shadow-xl transition-shadow">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900 text-primary-600 dark:text-primary-400 mb-4">
+          {icon}
+        </div>
+        <h3 className="font-semibold mb-2 text-lg">{title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
+      </Card>
+    </motion.div>
   );
 }
