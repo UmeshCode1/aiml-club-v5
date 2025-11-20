@@ -17,25 +17,33 @@ export async function GET() {
         next: { revalidate: 600 }
       }
     );
-    
+
     if (!res.ok) {
-      console.error('Appwrite API error:', res.status, res.statusText);
+      const errorText = await res.text();
+      console.error('Appwrite API error:', res.status, res.statusText, errorText);
       return NextResponse.json({ 
         members: [],
-        error: 'Failed to fetch team'
-      }, { status: 200 });
+        error: `Failed to fetch team: ${res.status} ${res.statusText} ${errorText}`
+      }, { status: 500 });
     }
-    
+
     const json = await res.json();
-    const members = (json.documents || []).sort((a: any, b: any) => a.order - b.order);
-    
+    if (!json.documents) {
+      console.error('Appwrite response missing documents:', JSON.stringify(json));
+      return NextResponse.json({ 
+        members: [],
+        error: 'No documents found in response.'
+      }, { status: 500 });
+    }
+    const members = (json.documents || []).sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+
     return NextResponse.json({ members });
   } catch (e: any) {
-    console.error('Team API error:', e.message);
+    console.error('Team API error:', e);
     return NextResponse.json({ 
       members: [],
-      error: e.message
-    }, { status: 200 });
+      error: e?.message || 'Unknown error'
+    }, { status: 500 });
   }
 }
 
