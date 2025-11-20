@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Instagram, Linkedin, Github, Mail } from 'lucide-react';
+import { Instagram, Linkedin, Github, Mail, Search } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Loader from '@/components/ui/Loader';
+import Skeleton from '@/components/ui/Skeleton';
 
 interface TeamMember {
   $id: string;
@@ -24,45 +25,83 @@ interface TeamMember {
 export default function TeamPage() {
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadTeam();
   }, []);
 
   const loadTeam = async () => {
+    setError(null);
     try {
       const res = await fetch('/api/team');
       const data = await res.json();
-      setTeam(data.members || []);
-    } catch (error) {
-      console.error('Error loading team:', error);
+      if (data.error) setError(data.error);
+      setTeam((data.members || []).sort((a: TeamMember, b: TeamMember) => a.order - b.order));
+    } catch (error: any) {
+      setError(error.message || 'Failed to load team');
     } finally {
       setLoading(false);
     }
   };
 
-  const groupedTeam = {
-    Leadership: team.filter((m) => m.category === 'leadership'),
-    'Technical Team': team.filter((m) => m.category === 'tech'),
-    'Event Management': team.filter((m) => m.category === 'event_heads'),
-    'Media & PR': team.filter((m) => m.category === 'media'),
-    'Creative Team': team.filter((m) => m.category === 'editors'),
-    'Operations': team.filter((m) => m.category === 'discipline' || m.category === 'stage'),
-  };
+  const filteredTeam = useMemo(() => {
+    if (!query.trim()) return team;
+    const q = query.toLowerCase();
+    return team.filter(t =>
+      t.name.toLowerCase().includes(q) ||
+      t.role.toLowerCase().includes(q) ||
+      (t.category || '').toLowerCase().includes(q)
+    );
+  }, [team, query]);
 
-  if (loading) return <Loader fullscreen />;
+  const groupedTeam = {
+    Leadership: filteredTeam.filter((m) => m.category === 'leadership' || m.category === 'faculty'),
+    'Technical Team': filteredTeam.filter((m) => m.category === 'tech'),
+    'Event Management': filteredTeam.filter((m) => m.category === 'event_heads'),
+    'Media & PR': filteredTeam.filter((m) => m.category === 'media'),
+    'Creative Team': filteredTeam.filter((m) => m.category === 'editors'),
+    Operations: filteredTeam.filter((m) => m.category === 'discipline' || m.category === 'stage'),
+  } as Record<string, TeamMember[]>;
+
+  if (loading) {
+    return (
+      <div className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <HeroBanner />
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton.Card key={i} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="py-20">
+    <div className="pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-            Meet Our <span className="gradient-text">Team</span>
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            The passionate individuals driving innovation and excellence at AIML Club
-          </p>
+        <HeroBanner />
+
+        {/* Search / Filter */}
+        <div className="mt-10 mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="relative w-full md:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by name, role or category..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-dark-card/70 backdrop-blur shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 transition"
+            />
+          </div>
+          {error && (
+            <div className="text-sm text-red-600 dark:text-red-400">
+              {error}
+            </div>
+          )}
         </div>
 
         {/* Team Sections */}
@@ -81,13 +120,49 @@ export default function TeamPage() {
           ) : null
         )}
 
-        {team.length === 0 && !loading && (
+        {filteredTeam.length === 0 && !loading && (
           <div className="text-center py-20">
-            <p className="text-gray-600 dark:text-gray-400">
-              Team information will be updated soon.
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">No team members match your search.</p>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function HeroBanner() {
+  return (
+    <div className="relative h-[340px] w-full rounded-3xl overflow-hidden shadow-xl shadow-primary-500/10 ring-1 ring-gray-200 dark:ring-gray-800">
+      <Image
+        src={
+          '/images/club-banner.webp'
+        }
+        alt="AI & Machine Learning Club Banner"
+        fill
+        priority
+        className="object-cover"
+        onError={(e: any) => {
+          // fallback to logo if banner missing
+          e.target.src = '/images/logo aiml.png';
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-primary-900/70 mix-blend-multiply" />
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl md:text-5xl font-display font-extrabold tracking-tight bg-gradient-to-r from-primary-300 via-white to-secondary-300 bg-clip-text text-transparent drop-shadow"
+        >
+          AI & Machine Learning Club
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200/90"
+        >
+          Innovate • Implement • Inspire — Driven by a multidisciplinary team.
+        </motion.p>
       </div>
     </div>
   );
