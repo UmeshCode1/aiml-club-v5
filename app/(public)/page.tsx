@@ -476,8 +476,8 @@ function EventCard({ event, index }: any) {
           )}
           <div className="p-6">
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full">
-                {event.type}
+              <span className="px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full capitalize">
+                {event.type.replace('_', ' ')}
               </span>
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {formatDate(event.startDate)}
@@ -505,7 +505,7 @@ function HighlightCard({ highlight, index }: any) {
         <Card hover className="h-full">
           <div className="p-6">
             <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-              {formatDate(highlight.createdAt)} • {highlight.author}
+              {formatDate(highlight.date)} • {highlight.author}
             </div>
             <h3 className="text-xl font-semibold mb-3">{highlight.title}</h3>
             <p className="text-gray-600 dark:text-gray-400 line-clamp-3">

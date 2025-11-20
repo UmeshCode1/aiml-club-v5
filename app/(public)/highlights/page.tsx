@@ -85,7 +85,7 @@ function HighlightCard({ highlight, index }: { highlight: Highlight; index: numb
             <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4 text-primary-500" />
-                <span>{formatDate(highlight.createdAt)}</span>
+                <span>{formatDate(highlight.date)}</span>
               </div>
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4 text-secondary-500" />

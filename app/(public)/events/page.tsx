@@ -139,13 +139,13 @@ export default function EventsPage() {
               className="px-4 py-2 rounded-lg border bg-white dark:bg-dark-card border-gray-300 dark:border-dark-border"
             >
               <option value="all">All Types</option>
-              <option value="Workshop">Workshop</option>
-              <option value="Session">Session</option>
-              <option value="Talk">Talk</option>
-              <option value="Test">Test</option>
-              <option value="Hackathon">Hackathon</option>
-              <option value="Guest Lecture">Guest Lecture</option>
-              <option value="Orientation">Orientation</option>
+              <option value="workshop">Workshop</option>
+              <option value="session">Session</option>
+              <option value="talk">Talk</option>
+              <option value="test">Test</option>
+              <option value="hackathon">Hackathon</option>
+              <option value="guest_lecture">Guest Lecture</option>
+              <option value="orientation">Orientation</option>
             </select>
           </div>
         </div>
@@ -224,12 +224,12 @@ function EventCard({ event, index }: { event: Event; index: number }) {
           {/* Content */}
           <div className="p-6">
             <div className="flex items-center gap-2 mb-3">
-              <span className="px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full">
-                {event.type}
+              <span className="px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full capitalize">
+                {event.type.replace('_', ' ')}
               </span>
               <span
-                className={`px-3 py-1 text-xs font-medium rounded-full ${
-                  event.status === 'Scheduled'
+                className={`px-3 py-1 text-xs font-medium rounded-full capitalize ${
+                  event.status === 'scheduled'
                     ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                 }`}
