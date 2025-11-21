@@ -240,7 +240,7 @@ function HeroSection() {
           <div className="flex items-center justify-center space-x-8 mb-8">
             <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-3 shadow-xl border border-gray-200 flex items-center justify-center">
               <Image
-                src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/6561e2e2b2b7e2a1a2b7/view?project=691e2b31003e6415bb4f"
+                src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aiml-logo/view?project=691e2b31003e6415bb4f"
                 alt="AIML Club Logo"
                 fill
                 className="object-contain animate-float p-2"
@@ -249,7 +249,7 @@ function HeroSection() {
             </div>
             <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl p-3 shadow-xl border border-gray-200 flex items-center justify-center">
               <Image
-                src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/6561e2e2b2b7e2a1a2b8/view?project=691e2b31003e6415bb4f"
+                src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/college-logo/view?project=691e2b31003e6415bb4f"
                 alt="OCT Logo"
                 fill
                 className="object-contain animate-float rounded-xl"
