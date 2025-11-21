@@ -263,7 +263,7 @@ export default function JoinPage() {
           className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400"
         >
           <p>
-            Your application will be reviewed by our team. You'll receive a confirmation
+            Your application will be reviewed by our team. You&apos;ll receive a confirmation
             email once your membership is approved.
           </p>
         </motion.div>

@@ -65,7 +65,7 @@ export default async function AppwriteStatusPage() {
       </div>
       <div className="text-xs text-gray-500 space-y-1">
         <p>Use this page to prove the Next.js app can reach Appwrite (health + list collections).</p>
-        <p>If the Appwrite wizard still shows "Waiting for connection", you can safely dismiss it.</p>
+        <p>If the Appwrite wizard still shows &quot;Waiting for connection&quot;, you can safely dismiss it.</p>
         <p>External ping endpoint: <code>/api/appwrite-connect</code> (returns 200 with CORS headers).</p>
       </div>
     </div>

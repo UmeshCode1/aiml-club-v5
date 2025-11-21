@@ -81,7 +81,7 @@ export default function GalleryPage() {
                 Gallery Coming Soon
               </h3>
               <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-                We'll be adding photos from our events and activities soon. Check back later!
+                We&apos;ll be adding photos from our events and activities soon. Check back later!
               </p>
             </motion.div>
           )}

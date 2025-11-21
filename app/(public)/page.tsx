@@ -31,15 +31,15 @@ export default function HomePage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch events from API route with timeout
-      const eventsPromise = fetch('/api/events', { 
+      const eventsPromise = fetch('/api/events', {
         cache: 'no-store',
         signal: AbortSignal.timeout(8000) // 8 second timeout
       })
         .then(r => r.ok ? r.json() : { upcoming: [], past: [], all: [] })
         .catch(() => ({ upcoming: [], past: [], all: [] }));
-      
+
       // Fetch highlights with timeout
       const highlightsPromise = fetch('/api/highlights', {
         cache: 'no-store',
@@ -52,15 +52,15 @@ export default function HomePage() {
         eventsPromise,
         highlightsPromise
       ]);
-      
+
       // Set events data
       const upcoming = eventsRes.upcoming || [];
       setUpcomingEvents(upcoming.slice(0, 3));
-      
+
       // Set highlights data
       const highlights = highlightsRes.highlights || [];
       setHighlights(highlights.slice(0, 3));
-      
+
       setError(null);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -197,7 +197,7 @@ export default function HomePage() {
                 No highlights available yet.
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                We'll share exciting updates soon!
+                We&apos;ll share exciting updates soon!
               </p>
             </motion.div>
           )}
@@ -333,7 +333,7 @@ function AboutSection() {
             </div>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
@@ -348,7 +348,7 @@ function AboutSection() {
             <div className="absolute inset-0 bg-gradient-to-t from-primary-900/50 to-transparent" />
           </motion.div>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
