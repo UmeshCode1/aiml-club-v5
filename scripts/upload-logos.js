@@ -1,4 +1,4 @@
-const { Client, Storage, Databases, ID } = require('node-appwrite');
+const { Client, Storage } = require('node-appwrite');
 const { InputFile } = require('node-appwrite/file');
 const fs = require('fs');
 const path = require('path');
@@ -48,6 +48,9 @@ async function uploadLogos() {
                 continue;
             }
 
+            const stats = fs.statSync(logo.path);
+            console.log(`   File size: ${(stats.size / 1024).toFixed(2)} KB`);
+
             // Delete existing file if it exists
             try {
                 await storage.deleteFile(CONFIG.BUCKET_ID, logo.fileId);
@@ -56,11 +59,12 @@ async function uploadLogos() {
                 // File doesn't exist, that's fine
             }
 
-            // Upload new file
+            // Upload new file with actual filename
+            const fileName = path.basename(logo.path);
             const file = await storage.createFile(
                 CONFIG.BUCKET_ID,
                 logo.fileId,
-                InputFile.fromPath(logo.path, logo.name)
+                InputFile.fromPath(logo.path, fileName)
             );
 
             console.log(`   ✅ Uploaded successfully!`);
@@ -69,7 +73,11 @@ async function uploadLogos() {
             console.log('');
 
         } catch (error) {
-            console.error(`   ❌ Error uploading ${logo.description}:`, error.message);
+            console.error(`   ❌ Error uploading ${logo.description}:`);
+            console.error(`   Message: ${error.message}`);
+            if (error.response) {
+                console.error(`   Response: ${JSON.stringify(error.response)}`);
+            }
             console.log('');
         }
     }
