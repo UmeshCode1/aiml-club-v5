@@ -25,7 +25,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-# .env and .env.local are now tracked for deployment
+.env*.local
+.env
 
 # vercel
 .vercel
