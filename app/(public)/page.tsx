@@ -222,12 +222,38 @@ export default function HomePage() {
 // Hero Section Component
 function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-blue-50 to-white">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary-200/30 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-      </div>
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.15),rgba(255,255,255,0))]" />
+
+      {/* Animated Gradient Orbs */}
+      <motion.div
+        className="absolute top-0 left-0 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl"
+        animate={{
+          x: [0, 100, 0],
+          y: [0, 50, 0],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <motion.div
+        className="absolute bottom-0 right-0 w-96 h-96 bg-secondary-500/20 rounded-full blur-3xl"
+        animate={{
+          x: [0, -100, 0],
+          y: [0, -50, 0],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_110%)]" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
@@ -278,21 +304,21 @@ function HeroSection() {
             </motion.div>
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-gray-900">
-            <span className="bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">AI & Machine Learning Club</span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white">
+            <span className="bg-gradient-to-r from-primary-400 via-secondary-400 to-primary-500 bg-clip-text text-transparent">AI & Machine Learning Club</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-700 font-medium">
+          <p className="text-xl md:text-2xl text-gray-200 font-medium">
             Oriental College of Technology, Bhopal
           </p>
 
-          <p className="text-2xl md:text-3xl font-display italic text-gray-600">
-            <span className="text-primary-500">Innovate</span> •{' '}
-            <span className="text-secondary-500">Implement</span> •{' '}
+          <p className="text-2xl md:text-3xl font-display italic text-gray-300">
+            <span className="text-primary-400">Innovate</span> •{' '}
+            <span className="text-secondary-400">Implement</span> •{' '}
             <span className="text-accent-neon">Inspire</span>
           </p>
 
-          <p className="max-w-2xl mx-auto text-lg text-gray-600">
+          <p className="max-w-2xl mx-auto text-lg text-gray-300">
             Join us in exploring the fascinating world of Artificial Intelligence
             and Machine Learning. Learn, build, and innovate together.
           </p>
