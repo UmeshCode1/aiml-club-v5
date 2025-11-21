@@ -58,12 +58,16 @@ export default function TeamPage() {
   }, [team, query]);
 
   const groupedTeam = {
-    Leadership: filteredTeam.filter((m) => m.category === 'leadership' || m.category === 'faculty'),
+    Faculty: filteredTeam.filter((m) => m.category === 'faculty'),
+    Leadership: filteredTeam.filter((m) => m.category === 'leadership'),
+    Finance: filteredTeam.filter((m) => m.category === 'finance'),
     'Technical Team': filteredTeam.filter((m) => m.category === 'tech'),
     'Event Management': filteredTeam.filter((m) => m.category === 'event_heads'),
-    'Media & PR': filteredTeam.filter((m) => m.category === 'media'),
+    'Stage Management': filteredTeam.filter((m) => m.category === 'stage'),
+    Media: filteredTeam.filter((m) => m.category === 'media'),
     'Creative Team': filteredTeam.filter((m) => m.category === 'editors'),
-    Operations: filteredTeam.filter((m) => m.category === 'discipline' || m.category === 'stage'),
+    'Public Relations': filteredTeam.filter((m) => m.category === 'pr'),
+    Discipline: filteredTeam.filter((m) => m.category === 'discipline'),
   } as Record<string, TeamMember[]>;
 
   const stats = [

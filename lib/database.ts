@@ -149,7 +149,7 @@ export interface TeamMember {
   $id?: string;
   name: string;
   role: string;
-  category: 'Faculty' | 'President' | 'Vice President' | 'Event Head' | 'Media' | 'Tech' | 'Discipline' | 'Editor' | 'Stage';
+  category: 'faculty' | 'leadership' | 'finance' | 'tech' | 'event_heads' | 'stage' | 'media' | 'editors' | 'pr' | 'discipline';
   photoId?: string;
   email?: string;
   phone?: string;
