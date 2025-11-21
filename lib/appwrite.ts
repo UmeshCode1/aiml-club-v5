@@ -2,8 +2,8 @@
 import { Client, Account, Teams, Databases, Storage } from 'appwrite';
 
 export const PROJECT_CONFIG = {
-  ENDPOINT: import.meta.env.VITE_APPWRITE_ENDPOINT,
-  PROJECT_ID: import.meta.env.VITE_APPWRITE_PROJECT_ID,
+  ENDPOINT: process.env.VITE_APPWRITE_ENDPOINT || '',
+  PROJECT_ID: process.env.VITE_APPWRITE_PROJECT_ID || '',
   TEAM_ID: 'core-club-team',
   DATABASE_ID: '691e2d6e00131d7cccf1',
   COLLECTIONS: {
@@ -24,6 +24,10 @@ export const PROJECT_CONFIG = {
   },
 };
 
+export const DATABASE_ID = PROJECT_CONFIG.DATABASE_ID;
+export const COLLECTIONS = PROJECT_CONFIG.COLLECTIONS;
+export const BUCKETS = PROJECT_CONFIG.BUCKETS;
+
 const client = new Client()
   .setEndpoint(PROJECT_CONFIG.ENDPOINT)
   .setProject(PROJECT_CONFIG.PROJECT_ID);
@@ -33,6 +37,11 @@ export const teams = new Teams(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
 
-export function getFilePreview(bucketId, fileId) {
+
+export function getFilePreview(bucketId: string, fileId: string): string {
   return `${PROJECT_CONFIG.ENDPOINT}/storage/buckets/${bucketId}/files/${fileId}/preview?project=${PROJECT_CONFIG.PROJECT_ID}`;
+}
+
+export function createAdminClient() {
+  return { account };
 }

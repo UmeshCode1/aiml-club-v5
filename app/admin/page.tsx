@@ -41,7 +41,7 @@ export default function AdminDashboard() {
         memberService.getPending(),
         eventService.getUpcoming(),
         suggestionService.getPending(),
-        storageService.listFiles(BUCKETS.GALLERY),
+        storageService.listFiles(BUCKETS.GALLERY_FILES),
       ]);
 
       setStats({
