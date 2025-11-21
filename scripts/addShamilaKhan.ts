@@ -2,6 +2,7 @@
  * Add Shamaila Khan to Team collection
  */
 
+
 const endpoint = 'https://fra.cloud.appwrite.io/v1';
 const project = '691e2b31003e6415bb4f';
 const databaseId = '691e2d6e00131d7cccf1';
@@ -31,7 +32,6 @@ async function api(method: string, path: string, body?: any) {
     const text = await res.text();
     throw new Error(`API error: ${res.status} ${text}`);
   }
-  
   const text = await res.text();
   if (!text) return {};
   return JSON.parse(text);

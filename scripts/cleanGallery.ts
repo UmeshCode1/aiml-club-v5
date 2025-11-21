@@ -2,11 +2,8 @@
  * Clean gallery and create proper album structure
  */
 
-const endpoint = 'https://fra.cloud.appwrite.io/v1';
-const project = '691e2b31003e6415bb4f';
-const databaseId = '691e2d6e00131d7cccf1';
+
 const galleryCollectionId = 'auto_1763586583858_5bdqms';
-const apiKey = process.env.APPWRITE_API_KEY || '';
 
 if (!apiKey) {
   console.error('Missing APPWRITE_API_KEY');
@@ -31,7 +28,6 @@ async function api(method: string, path: string, body?: any) {
     const text = await res.text();
     throw new Error(`API error: ${res.status} ${text}`);
   }
-  
   const text = await res.text();
   if (!text) return {};
   return JSON.parse(text);

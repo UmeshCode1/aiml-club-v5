@@ -3,13 +3,14 @@
  * Keeps the first occurrence and deletes duplicates based on name + email
  */
 
-const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1';
-const project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '691e2b31003e6415bb4f';
-const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '691e2d6e00131d7cccf1';
-const apiKey = process.env.APPWRITE_API_KEY || '';
 
-const teamCollectionIdRaw = process.env.NEXT_PUBLIC_COLLECTION_TEAM;
-const teamCollectionId = (!teamCollectionIdRaw || teamCollectionIdRaw === 'TBD') ? 'auto_1763586573960_ec75mk' : teamCollectionIdRaw;
+let endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1';
+let project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || '691e2b31003e6415bb4f';
+let databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID || '691e2d6e00131d7cccf1';
+let apiKey = process.env.APPWRITE_API_KEY || '';
+
+let teamCollectionIdRaw = process.env.NEXT_PUBLIC_COLLECTION_TEAM;
+let teamCollectionId = (!teamCollectionIdRaw || teamCollectionIdRaw === 'TBD') ? 'auto_1763586573960_ec75mk' : teamCollectionIdRaw;
 
 if (!endpoint || !project || !databaseId || !teamCollectionId || !apiKey) {
   console.error('Missing required environment variables');

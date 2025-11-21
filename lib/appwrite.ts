@@ -2,8 +2,8 @@
 import { Client, Account, Teams, Databases, Storage } from 'appwrite';
 
 export const PROJECT_CONFIG = {
-  ENDPOINT: process.env.VITE_APPWRITE_ENDPOINT || '',
-  PROJECT_ID: process.env.VITE_APPWRITE_PROJECT_ID || '',
+  ENDPOINT: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || process.env.APPWRITE_ENDPOINT || '',
+  PROJECT_ID: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || process.env.APPWRITE_PROJECT_ID || '',
   TEAM_ID: 'core-club-team',
   DATABASE_ID: '691e2d6e00131d7cccf1',
   COLLECTIONS: {
