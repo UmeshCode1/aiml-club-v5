@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { Instagram, Linkedin, Github, Mail, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Instagram, Linkedin, Github, Mail, Search, Users, Award, Sparkles } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Loader from '@/components/ui/Loader';
 import { CardSkeleton } from '@/components/ui/Skeleton';
@@ -66,6 +66,12 @@ export default function TeamPage() {
     Operations: filteredTeam.filter((m) => m.category === 'discipline' || m.category === 'stage'),
   } as Record<string, TeamMember[]>;
 
+  const stats = [
+    { icon: Users, label: 'Team Members', value: team.length },
+    { icon: Award, label: 'Categories', value: Object.values(groupedTeam).filter(g => g.length > 0).length },
+    { icon: Sparkles, label: 'Excellence', value: '100%' },
+  ];
+
   if (loading) {
     return (
       <div className="py-20">
@@ -86,45 +92,126 @@ export default function TeamPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <HeroBanner />
 
-        {/* Search / Filter */}
-        <div className="mt-10 mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="relative w-full md:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by name, role or category..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-dark-card/70 backdrop-blur shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 transition"
-            />
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 + index * 0.1 }}
+              className="relative group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100" />
+              <div className="relative bg-white dark:bg-dark-card rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white shadow-lg">
+                    <stat.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">{stat.label}</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+                      {stat.value}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Enhanced Search */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-12 mb-12"
+        >
+          <div className="relative max-w-2xl mx-auto">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl blur-xl" />
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-500 dark:text-primary-400" />
+              <input
+                type="text"
+                placeholder="Search by name, role or category..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-dark-card/80 backdrop-blur-xl shadow-xl focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all duration-300 text-lg"
+              />
+              {query && (
+                <motion.button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  onClick={() => setQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </motion.button>
+              )}
+            </div>
           </div>
           {error && (
-            <div className="text-sm text-red-600 dark:text-red-400">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center mt-4 text-sm text-red-600 dark:text-red-400"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* Team Sections */}
-        {Object.entries(groupedTeam).map(([category, members]) =>
-          members.length > 0 ? (
-            <section key={category} className="mb-16">
-              <h2 className="text-2xl md:text-3xl font-display font-bold mb-8 text-center">
-                {category}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {members.map((member, index) => (
-                  <TeamMemberCard key={member.$id} member={member} index={index} />
-                ))}
-              </div>
-            </section>
-          ) : null
-        )}
+        <AnimatePresence mode="wait">
+          {Object.entries(groupedTeam).map(([category, members]) =>
+            members.length > 0 ? (
+              <motion.section
+                key={category}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mb-20"
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="flex items-center gap-4 mb-10"
+                >
+                  <div className="h-1 w-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full" />
+                  <h2 className="text-3xl md:text-4xl font-display font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                    {category}
+                  </h2>
+                  <div className="h-1 flex-1 bg-gradient-to-r from-secondary-500/50 to-transparent rounded-full" />
+                </motion.div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  {members.map((member, index) => (
+                    <TeamMemberCard key={member.$id} member={member} index={index} />
+                  ))}
+                </div>
+              </motion.section>
+            ) : null
+          )}
+        </AnimatePresence>
 
         {filteredTeam.length === 0 && !loading && (
-          <div className="text-center py-20">
-            <p className="text-gray-600 dark:text-gray-400">No team members match your search.</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20"
+          >
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900/50 dark:to-secondary-900/50 mb-6">
+              <Search className="w-10 h-10 text-primary-600 dark:text-primary-400" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-200">No Results Found</h3>
+            <p className="text-gray-600 dark:text-gray-400">Try adjusting your search to find what you&apos;re looking for.</p>
+          </motion.div>
         )}
       </div>
     </div>
@@ -133,7 +220,7 @@ export default function TeamPage() {
 
 function HeroBanner() {
   return (
-    <div className="relative h-[340px] w-full rounded-3xl overflow-hidden shadow-xl shadow-primary-500/10 ring-1 ring-gray-200 dark:ring-gray-800">
+    <div className="relative h-[400px] w-full rounded-3xl overflow-hidden shadow-2xl ring-1 ring-gray-200/50 dark:ring-gray-800/50">
       <Image
         src={'https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/clubteamimage/view?project=691e2b31003e6415bb4f'}
         alt="AI & Machine Learning Club Banner"
@@ -141,27 +228,69 @@ function HeroBanner() {
         priority
         className="object-cover"
         onError={(e: any) => {
-          // fallback to logo if banner missing
           e.target.src = 'https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aimllogo/view?project=691e2b31003e6415bb4f';
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-primary-900/70 mix-blend-multiply" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+      {/* Enhanced gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-primary-900/80" />
+
+      {/* Animated particles effect */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-white/30 rounded-full"
+            initial={{
+              x: Math.random() * 100 + '%',
+              y: Math.random() * 100 + '%',
+            }}
+            animate={{
+              y: [null, Math.random() * 100 + '%'],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-5xl font-display font-extrabold tracking-tight bg-gradient-to-r from-primary-300 via-white to-secondary-300 bg-clip-text text-transparent drop-shadow"
+          transition={{ duration: 0.8 }}
+          className="space-y-6"
         >
-          AI & Machine Learning Club
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mt-4 max-w-2xl text-lg md:text-xl text-gray-200/90"
-        >
-          Innovate • Implement • Inspire — Driven by a multidisciplinary team.
-        </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-5xl md:text-6xl font-display font-extrabold tracking-tight"
+          >
+            <span className="bg-gradient-to-r from-primary-300 via-white to-secondary-300 bg-clip-text text-transparent drop-shadow-2xl">
+              AI & Machine Learning Club
+            </span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="max-w-3xl text-xl md:text-2xl text-white/95 font-medium leading-relaxed"
+          >
+            Innovate • Implement • Inspire
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-lg text-white/80"
+          >
+            Driven by a multidisciplinary team of passionate innovators
+          </motion.p>
+        </motion.div>
       </div>
     </div>
   );
@@ -170,29 +299,41 @@ function HeroBanner() {
 function TeamMemberCard({ member, index }: { member: TeamMember; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
-      whileHover={{ y: -8 }}
-      className="h-full"
+      whileHover={{ y: -12, scale: 1.02 }}
+      className="h-full group"
     >
-      <Card hover className="h-full overflow-hidden group relative">
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary-500/0 via-secondary-500/0 to-primary-500/0 group-hover:from-primary-500/20 group-hover:via-secondary-500/20 group-hover:to-primary-500/20 rounded-2xl blur-xl transition-all duration-500 -z-10" />
+
+      <Card hover className="h-full overflow-hidden group relative border-2 border-transparent hover:border-primary-500/20 dark:hover:border-primary-400/20 transition-all duration-300">
         {/* Photo with enhanced styling */}
-        <div className="relative h-72 bg-gradient-to-br from-primary-100 via-secondary-50 to-primary-50 dark:from-primary-900/30 dark:via-secondary-900/20 dark:to-primary-900/30 overflow-hidden">
+        <div className="relative h-80 bg-gradient-to-br from-primary-100 via-secondary-50 to-primary-50 dark:from-primary-900/30 dark:via-secondary-900/20 dark:to-primary-900/30 overflow-hidden">
           {member.imageUrl ? (
             <>
               <Image
                 src={member.imageUrl}
                 alt={member.name}
                 fill
-                className="object-cover transition-all duration-500 group-hover:scale-110"
+                className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
               />
-              {/* Gradient overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              {/* Enhanced gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+
+              {/* Name overlay on hover */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                className="absolute bottom-0 left-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <h3 className="text-2xl font-bold text-white drop-shadow-lg">{member.name}</h3>
+                <p className="text-white/90 font-medium">{member.role}</p>
+              </motion.div>
             </>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-2xl ring-4 ring-white/20">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-600 flex items-center justify-center text-white text-5xl font-bold shadow-2xl ring-4 ring-white/30 group-hover:scale-110 transition-transform duration-300">
                 {member.name
                   .split(' ')
                   .map((n) => n[0])
@@ -202,28 +343,28 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
             </div>
           )}
 
-          {/* Category badge */}
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-xs font-semibold text-gray-700 dark:text-gray-300 shadow-lg">
+          {/* Category badge with enhanced styling */}
+          <div className="absolute top-4 right-4 px-4 py-1.5 rounded-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md text-xs font-bold text-gray-800 dark:text-gray-200 shadow-xl border border-white/20 group-hover:scale-110 transition-transform duration-300">
             {member.category}
           </div>
         </div>
 
         {/* Info section with enhanced spacing */}
-        <div className="p-6 bg-white dark:bg-dark-card">
-          <h3 className="text-xl font-bold mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+        <div className="p-7 bg-white dark:bg-dark-card">
+          <h3 className="text-xl font-bold mb-1.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-300">
             {member.name}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-5 font-medium">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 font-semibold">
             {member.role}
           </p>
 
           {/* Enhanced Social Links */}
           {(member.instagram || member.linkedin || member.github || member.email) && (
-            <div className="flex items-center gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center gap-2.5 pt-5 border-t-2 border-gray-100 dark:border-gray-800">
               {member.email && (
                 <a
                   href={`mailto:${member.email}`}
-                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110"
+                  className="p-3 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 text-blue-600 dark:text-blue-400 transition-all duration-200 hover:scale-125 hover:-rotate-6 shadow-md hover:shadow-lg"
                   title="Email"
                 >
                   <Mail className="w-4 h-4" />
@@ -234,7 +375,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   href={member.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110"
+                  className="p-3 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 text-blue-600 dark:text-blue-400 transition-all duration-200 hover:scale-125 hover:-rotate-6 shadow-md hover:shadow-lg"
                   title="LinkedIn"
                 >
                   <Linkedin className="w-4 h-4" />
@@ -245,7 +386,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   href={member.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-pink-50 dark:hover:bg-pink-900/20 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-200 hover:scale-110"
+                  className="p-3 rounded-xl bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-900/20 dark:to-pink-800/20 hover:from-pink-100 hover:to-pink-200 dark:hover:from-pink-900/30 dark:hover:to-pink-800/30 text-pink-600 dark:text-pink-400 transition-all duration-200 hover:scale-125 hover:rotate-6 shadow-md hover:shadow-lg"
                   title="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
@@ -256,7 +397,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   href={member.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-200 hover:scale-110"
+                  className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-700/60 dark:hover:to-gray-600/60 text-gray-700 dark:text-gray-300 transition-all duration-200 hover:scale-125 hover:-rotate-6 shadow-md hover:shadow-lg"
                   title="GitHub"
                 >
                   <Github className="w-4 h-4" />
