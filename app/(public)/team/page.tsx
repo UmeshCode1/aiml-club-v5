@@ -135,14 +135,14 @@ function HeroBanner() {
   return (
     <div className="relative h-[340px] w-full rounded-3xl overflow-hidden shadow-xl shadow-primary-500/10 ring-1 ring-gray-200 dark:ring-gray-800">
       <Image
-        src={'/images/club-banner.jpg'}
+        src={'https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/clubteamimage/view?project=691e2b31003e6415bb4f'}
         alt="AI & Machine Learning Club Banner"
         fill
         priority
         className="object-cover"
         onError={(e: any) => {
           // fallback to logo if banner missing
-          e.target.src = '/images/logo aiml.png';
+          e.target.src = 'https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aimllogo/view?project=691e2b31003e6415bb4f';
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-primary-900/70 mix-blend-multiply" />
