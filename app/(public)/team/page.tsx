@@ -173,20 +173,26 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.05 }}
+      whileHover={{ y: -8 }}
+      className="h-full"
     >
-      <Card hover className="h-full overflow-hidden group">
-        {/* Photo */}
-        <div className="relative h-64 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900">
+      <Card hover className="h-full overflow-hidden group relative">
+        {/* Photo with enhanced styling */}
+        <div className="relative h-72 bg-gradient-to-br from-primary-100 via-secondary-50 to-primary-50 dark:from-primary-900/30 dark:via-secondary-900/20 dark:to-primary-900/30 overflow-hidden">
           {member.imageUrl ? (
-            <Image
-              src={member.imageUrl}
-              alt={member.name}
-              fill
-              className="object-cover group-hover:scale-110 transition-transform duration-300"
-            />
+            <>
+              <Image
+                src={member.imageUrl}
+                alt={member.name}
+                fill
+                className="object-cover transition-all duration-500 group-hover:scale-110"
+              />
+              {/* Gradient overlay on hover */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-3xl font-bold">
+              <div className="w-28 h-28 rounded-full bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-2xl ring-4 ring-white/20">
                 {member.name
                   .split(' ')
                   .map((n) => n[0])
@@ -195,28 +201,32 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
               </div>
             </div>
           )}
+
+          {/* Category badge */}
+          <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-xs font-semibold text-gray-700 dark:text-gray-300 shadow-lg">
+            {member.category}
+          </div>
         </div>
 
-        {/* Info */}
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-1 group-hover:text-primary-600 transition-colors">
+        {/* Info section with enhanced spacing */}
+        <div className="p-6 bg-white dark:bg-dark-card">
+          <h3 className="text-xl font-bold mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {member.name}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-5 font-medium">
             {member.role}
           </p>
 
-          {/* Social Links */}
+          {/* Enhanced Social Links */}
           {(member.instagram || member.linkedin || member.github || member.email) && (
-            <div className="flex items-center gap-2">
-              {member.instagram && (
+            <div className="flex items-center gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+              {member.email && (
                 <a
-                  href={member.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors"
+                  href={`mailto:${member.email}`}
+                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110"
+                  title="Email"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <Mail className="w-4 h-4" />
                 </a>
               )}
               {member.linkedin && (
@@ -224,9 +234,21 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   href={member.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors"
+                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110"
+                  title="LinkedIn"
                 >
                   <Linkedin className="w-4 h-4" />
+                </a>
+              )}
+              {member.instagram && (
+                <a
+                  href={member.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-pink-50 dark:hover:bg-pink-900/20 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-200 hover:scale-110"
+                  title="Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
                 </a>
               )}
               {member.github && (
@@ -234,17 +256,10 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   href={member.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors"
+                  className="p-2.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 transition-all duration-200 hover:scale-110"
+                  title="GitHub"
                 >
                   <Github className="w-4 h-4" />
-                </a>
-              )}
-              {member.email && (
-                <a
-                  href={`mailto:${member.email}`}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors"
-                >
-                  <Mail className="w-4 h-4" />
                 </a>
               )}
             </div>
