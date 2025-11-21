@@ -7,10 +7,10 @@ export async function GET() {
 
     const members = response.documents.map((member: any) => {
       let imageUrl = null;
-      if (member.photo) {
+      if (member.photoId) {
         try {
           // Get view URL for full quality, or preview for optimized
-          imageUrl = storageService.getFileView(BUCKETS.TEAM_FILES, member.photo).href;
+          imageUrl = storageService.getFileView(BUCKETS.TEAM_FILES, member.photoId).href;
         } catch (e) {
           console.error(`Error generating image URL for member ${member.name}:`, e);
         }

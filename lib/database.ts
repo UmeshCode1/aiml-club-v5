@@ -150,7 +150,7 @@ export interface TeamMember {
   name: string;
   role: string;
   category: 'Faculty' | 'President' | 'Vice President' | 'Event Head' | 'Media' | 'Tech' | 'Discipline' | 'Editor' | 'Stage';
-  photo?: string;
+  photoId?: string;
   email?: string;
   phone?: string;
   instagram?: string;
