@@ -35,7 +35,17 @@ export async function GET() {
         error: 'No documents found in response.'
       }, { status: 500 });
     }
-    const members = (json.documents || []).sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
+    // Helper to strip file extension
+    function stripExtension(photoId: string) {
+      return photoId ? photoId.replace(/\.[^/.]+$/i, '') : '';
+    }
+    const bucketId = process.env.NEXT_PUBLIC_BUCKET_TEAM!;
+    const members = (json.documents || []).map((member: any) => {
+      const rawPhotoId = member.photoId || '';
+      const fileId = stripExtension(rawPhotoId);
+      const imageUrl = `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${project}`;
+      return { ...member, imageUrl };
+    }).sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0));
 
     return NextResponse.json({ members });
   } catch (e: any) {

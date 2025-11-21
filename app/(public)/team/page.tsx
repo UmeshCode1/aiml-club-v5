@@ -20,6 +20,7 @@ interface TeamMember {
   linkedin?: string;
   github?: string;
   order: number;
+  imageUrl?: string;
 }
 
 export default function TeamPage() {
@@ -176,9 +177,9 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
       <Card hover className="h-full overflow-hidden group">
         {/* Photo */}
         <div className="relative h-64 bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900">
-          {member.photoId ? (
+          {member.imageUrl ? (
             <Image
-              src={`${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_BUCKET_TEAM}/files/${member.photoId}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`}
+              src={member.imageUrl}
               alt={member.name}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-300"
