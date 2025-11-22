@@ -13,11 +13,17 @@ import Button from '@/components/ui/Button';
 
 interface Album {
   $id: string;
-  title: string;
+  name: string;
   date: string;
-  cover_image_url: string;
-  photo_count: number;
-  link?: string;
+  description?: string;
+  category: string;
+  coverPhotoId?: string;
+  photoIds?: string[];
+  eventLink?: string;
+  photographerName?: string;
+  isPublished: boolean;
+  order: number;
+  googleDriveLink?: string;
 }
 
 export default function GalleryPage() {
@@ -28,7 +34,7 @@ export default function GalleryPage() {
     fetchAlbums();
 
     // Real-time subscription
-    const unsubscribe = subscribeToCollection(COLLECTIONS.ALBUMS, (response) => {
+    const unsubscribe = subscribeToCollection(COLLECTIONS.GALLERY, (response) => {
       if (response.events.includes('databases.*.collections.*.documents.*.create')) {
         setAlbums((prev) => [response.payload as Album, ...prev]);
       } else if (response.events.includes('databases.*.collections.*.documents.*.update')) {
@@ -49,8 +55,11 @@ export default function GalleryPage() {
     try {
       const response = await databases.listDocuments(
         process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-        COLLECTIONS.ALBUMS,
-        [Query.orderDesc('date')]
+        COLLECTIONS.GALLERY,
+        [
+          Query.equal('isPublished', true),
+          Query.orderDesc('date')
+        ]
       );
       setAlbums(response.documents as unknown as Album[]);
     } catch (error) {
@@ -62,13 +71,10 @@ export default function GalleryPage() {
 
   // Helper to get image source (URL or File ID)
   const getImageSrc = (album: Album) => {
-    if (!album.cover_image_url) return '/images/placeholder-album.jpg'; // Fallback
-    if (album.cover_image_url.startsWith('http')) return album.cover_image_url;
-    // If it's a file ID, use the album-covers bucket or images bucket
-    // We'll try album-covers first, but getPreviewUrl defaults to IMAGES bucket in lib/appwrite.ts
-    // So we might need to manually construct it if it's in a different bucket
-    // For now, assuming user puts full URL or file ID in IMAGES bucket as per previous pattern
-    return getPreviewUrl(album.cover_image_url, 800, 600, BUCKETS.ALBUM_COVERS);
+    if (!album.coverPhotoId) return '/images/placeholder-album.jpg'; // Fallback
+    if (album.coverPhotoId.startsWith('http')) return album.coverPhotoId;
+    // Use the gallery-files bucket for cover photos
+    return getPreviewUrl(album.coverPhotoId, 800, 600, BUCKETS.GALLERY_FILES);
   };
 
   return (
@@ -149,20 +155,20 @@ export default function GalleryPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
                       <Image
                         src={getImageSrc(album)}
-                        alt={album.title}
+                        alt={album.name}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
 
                       {/* Overlay Content */}
                       <div className="absolute bottom-0 left-0 right-0 p-6 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 className="text-2xl font-bold text-white mb-2 line-clamp-1">{album.title}</h3>
+                        <h3 className="text-2xl font-bold text-white mb-2 line-clamp-1">{album.name}</h3>
                         <div className="flex items-center text-gray-300 text-sm space-x-4">
                           <span>{format(new Date(album.date), 'MMMM yyyy')}</span>
                           <span className="w-1 h-1 bg-gray-400 rounded-full" />
                           <span className="flex items-center">
                             <ImageIcon className="w-4 h-4 mr-1" />
-                            {album.photo_count} photos
+                            {album.photoIds?.length || 0} photos
                           </span>
                         </div>
                       </div>
@@ -170,7 +176,7 @@ export default function GalleryPage() {
                       {/* View Button Overlay */}
                       <div className="absolute inset-0 z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
                         <a
-                          href={album.link || '#'}
+                          href={album.googleDriveLink || album.eventLink || '#'}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"

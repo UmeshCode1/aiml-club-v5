@@ -12,15 +12,22 @@ import { cn } from '@/lib/utils';
 import { highlightService, Highlight } from '@/lib/database';
 import Link from 'next/link';
 
+
 interface Event {
   $id: string;
-  title: string;
-  date: string;
+  name: string;
+  startDate: string;
+  endDate?: string;
   description: string;
-  image_url: string;
-  registration_link?: string;
-  status: 'Open' | 'Closed' | 'Completed';
-  drive_link?: string;
+  posterUrl?: string;
+  registrationLink?: string;
+  status: 'upcoming' | 'ongoing' | 'completed';
+  venue?: string;
+  category: string;
+  isPublished: boolean;
+  resourceLink?: string;
+  driveMemoriesLink?: string;
+  certificateDriveLink?: string;
 }
 
 type Tab = 'upcoming' | 'past' | 'highlights';
@@ -37,7 +44,10 @@ export default function EventsPage() {
       const eventsResponse = await databases.listDocuments(
         process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
         COLLECTIONS.EVENTS,
-        [Query.orderDesc('date')]
+        [
+          Query.equal('isPublished', true),
+          Query.orderDesc('startDate')
+        ]
       );
       setEvents(eventsResponse.documents as unknown as Event[]);
 
@@ -64,7 +74,7 @@ export default function EventsPage() {
     const unsubscribeEvents = subscribeToCollection(COLLECTIONS.EVENTS, (response) => {
       const { events: eventTypes, payload } = response;
       if (eventTypes.some(e => e.includes('create'))) {
-        setEvents(prev => [payload as Event, ...prev].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+        setEvents(prev => [payload as Event, ...prev].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()));
       } else if (eventTypes.some(e => e.includes('update'))) {
         setEvents(prev => prev.map(e => e.$id === payload.$id ? payload as Event : e));
       } else if (eventTypes.some(e => e.includes('delete'))) {
@@ -93,8 +103,8 @@ export default function EventsPage() {
     };
   }, []);
 
-  const upcomingEvents = events.filter(e => new Date(e.date) >= new Date() || e.status === 'Open');
-  const pastEvents = events.filter(e => new Date(e.date) < new Date() && e.status !== 'Open');
+  const upcomingEvents = events.filter(e => new Date(e.startDate) >= new Date() || e.status === 'upcoming');
+  const pastEvents = events.filter(e => new Date(e.startDate) < new Date() && e.status !== 'upcoming');
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -237,8 +247,8 @@ export default function EventsPage() {
                 {/* Image */}
                 <div className="relative h-48 w-full overflow-hidden">
                   <Image
-                    src={event.image_url || '/placeholder-event.jpg'}
-                    alt={event.title}
+                    src={event.posterUrl || '/placeholder-event.jpg'}
+                    alt={event.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
@@ -252,11 +262,11 @@ export default function EventsPage() {
                 <div className="p-6">
                   <div className="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 mb-3 font-medium">
                     <Calendar className="w-4 h-4" />
-                    {format(new Date(event.date), 'MMMM d, yyyy • h:mm a')}
+                    {format(new Date(event.startDate), 'MMMM d, yyyy')}
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                    {event.title}
+                    {event.name}
                   </h3>
 
                   <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3">
@@ -265,9 +275,9 @@ export default function EventsPage() {
 
                   {/* Action Buttons */}
                   <div className="mt-auto space-y-3">
-                    {event.status === 'Open' ? (
+                    {event.status === 'upcoming' ? (
                       <a
-                        href={event.registration_link}
+                        href={event.registrationLink}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="block w-full"
@@ -283,32 +293,19 @@ export default function EventsPage() {
                       </Button>
                     ) : (
                       <Button className="w-full" variant="secondary" disabled>
-                        Event Completed
+                        View Photos
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-50" />
                       </Button>
-                    )}
-
-                    {/* Drive Link Button */}
-                    {event.drive_link && (
-                      <a
-                        href={event.drive_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full"
-                      >
-                        <Button className="w-full group/btn" variant="outline">
-                          <ImageIcon className="w-4 h-4 mr-2" />
-                          View Photos
-                          <ExternalLink className="w-3 h-3 ml-2 opacity-50" />
-                        </Button>
                       </a>
                     )}
-                  </div>
                 </div>
+              </div>
               </Card>
-            ))}
-          </div>
-        )
-      )}
+        ))}
     </div>
+  )
+      )
+}
+    </div >
   );
 }
