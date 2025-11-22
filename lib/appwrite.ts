@@ -20,6 +20,7 @@ export const PROJECT_CONFIG = {
         IMAGES: 'images',
         ALBUM_COVERS: 'album-covers',
         TEAM: 'team',
+        GALLERY_FILES: 'gallery-files',
     },
 };
 
