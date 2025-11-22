@@ -1,12 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { ButtonHTMLAttributes, forwardRef, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
+  magnetic?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -16,67 +18,78 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       variant = 'default',
       size = 'md',
       isLoading = false,
+      magnetic = false,
       disabled,
       children,
       ...props
     },
     ref
   ) => {
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (!magnetic) return;
+      const { clientX, clientY } = e;
+      const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+      const x = (clientX - (left + width / 2)) * 0.3;
+      const y = (clientY - (top + height / 2)) * 0.3;
+      setPosition({ x, y });
+    };
+
+    const handleMouseLeave = () => {
+      if (!magnetic) return;
+      setPosition({ x: 0, y: 0 });
+    };
+
     const baseStyles =
-      'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+      'relative inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group';
 
     const variants = {
-      default: 'bg-gray-800 text-white hover:bg-gray-700 focus:ring-gray-500 hover:scale-105',
+      default: 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100',
       primary:
-        'bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 bg-size-200 text-white hover:bg-right focus:ring-primary-500 shadow-lg hover:shadow-2xl hover:shadow-primary-500/50 hover:scale-105 animate-gradient',
-      secondary: 'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500 hover:scale-105 shadow-md hover:shadow-lg',
+        'bg-gradient-to-r from-primary-600 via-secondary-600 to-primary-600 bg-size-200 text-white hover:bg-right shadow-lg shadow-primary-500/25 hover:shadow-primary-500/40 animate-gradient',
+      secondary: 'bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20',
       outline:
-        'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 dark:border-secondary-500 dark:text-secondary-400 dark:hover:bg-secondary-950 focus:ring-primary-500 hover:scale-105',
-      ghost: 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105',
-      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 hover:scale-105',
+        'border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-primary-500 hover:text-primary-500 dark:hover:border-primary-400 dark:hover:text-primary-400 bg-transparent',
+      ghost: 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white',
+      danger: 'bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/25',
     };
 
     const sizes = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg',
+      sm: 'px-4 py-2 text-sm',
+      md: 'px-6 py-3 text-base',
+      lg: 'px-8 py-4 text-lg',
     };
 
     return (
-      <button
+      <motion.button
         ref={ref}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={disabled || isLoading}
-        {...props}
+        animate={{ x: position.x, y: position.y }}
+        transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        whileTap={{ scale: 0.95 }}
+        {...(props as any)}
       >
+        {/* Ripple Effect Container */}
+        <div className="absolute inset-0 -z-10 overflow-hidden rounded-xl">
+          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+        </div>
+
         {isLoading ? (
-          <>
-            <svg
-              className="animate-spin -ml-1 mr-2 h-4 w-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-            Loading...
-          </>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            <span>Loading...</span>
+          </div>
         ) : (
-          children
+          <div className="relative z-10 flex items-center gap-2">
+            {children}
+          </div>
         )}
-      </button>
+      </motion.button>
     );
   }
 );

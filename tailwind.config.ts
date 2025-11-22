@@ -10,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // AI Club Theme - Purple & Blue Gradients
+        // Premium Theme System
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -25,29 +25,40 @@ const config: Config = {
           950: '#082f49',
         },
         secondary: {
-          50: '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#a855f7',
-          600: '#9333ea',
-          700: '#7e22ce',
-          800: '#6b21a8',
-          900: '#581c87',
-          950: '#3b0764',
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+          900: '#4c1d95',
+          950: '#2e1065',
+        },
+        // Light Mode Colors
+        light: {
+          bg: '#F8FAFC', // Slate-50 - Soft off-white
+          card: '#FFFFFF',
+          text: '#0F172A', // Slate-900
+          border: '#E2E8F0', // Slate-200
+          muted: '#64748B', // Slate-500
+        },
+        // Dark Mode Colors
+        dark: {
+          bg: '#020617', // Slate-950 - Deep Space Black
+          card: '#0F172A', // Slate-900
+          text: '#F8FAFC', // Slate-50
+          border: '#1E293B', // Slate-800
+          muted: '#94A3B8', // Slate-400
         },
         accent: {
           neon: '#00f0ff',
           purple: '#8b5cf6',
-          blue: '#3b82f6',
+          pink: '#ec4899',
+          amber: '#f59e0b',
         },
-        dark: {
-          bg: '#0a0a0f',
-          card: '#121218',
-          border: '#1f1f29',
-        },
-        border: '#e5e7eb',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
