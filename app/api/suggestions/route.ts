@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { COLLECTIONS } from '@/lib/appwrite';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
     const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT?.replace(/\/$/, '');
     const project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
     const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-    const collectionId = process.env.NEXT_PUBLIC_COLLECTION_SUGGESTIONS;
+    const collectionId = COLLECTIONS.SUGGESTIONS;
     const apiKey = process.env.APPWRITE_API_KEY;
 
     if (!endpoint || !project || !databaseId || !collectionId || !apiKey) {

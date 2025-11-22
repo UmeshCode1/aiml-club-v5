@@ -1,10 +1,42 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Instagram, Linkedin, Github, Mail, Phone } from 'lucide-react';
+import { Instagram, Linkedin, Github, Mail, Send } from 'lucide-react';
+import Button from './ui/Button';
+import toast from 'react-hot-toast';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setSubscribing(true);
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('Subscribed successfully!');
+        setEmail('');
+      } else {
+        toast.error(data.error || 'Failed to subscribe');
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+    } finally {
+      setSubscribing(false);
+    }
+  };
+
   const socialLinks = [
     {
       name: 'Instagram',
@@ -34,7 +66,7 @@ export default function Footer() {
     { name: 'Events', href: '/events' },
     { name: 'Highlights', href: '/highlights' },
     { name: 'Gallery', href: '/gallery' },
-    { name: 'Join Us', href: '/join' },
+    { name: 'Contact Us', href: '/contact' },
   ];
 
   const importantLinks = [
@@ -66,6 +98,30 @@ export default function Footer() {
             <p className="text-gray-300 text-sm italic">
               Innovate • Implement • Inspire
             </p>
+
+            {/* Subscribe Form */}
+            <div className="pt-4">
+              <h4 className="text-sm font-semibold mb-2">Subscribe to our newsletter</h4>
+              <form onSubmit={handleSubscribe} className="flex gap-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="bg-gray-800/50 border border-gray-700 rounded-lg px-3 py-2 text-sm w-full focus:outline-none focus:border-primary-500 transition-colors"
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  disabled={subscribing}
+                  className="!px-3"
+                >
+                  {subscribing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send size={16} />}
+                </Button>
+              </form>
+            </div>
           </div>
 
           {/* Quick Links */}

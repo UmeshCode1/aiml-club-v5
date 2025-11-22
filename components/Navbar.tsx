@@ -74,7 +74,7 @@ export default function Navbar() {
     { href: '/events', label: 'Events' },
     { href: '/highlights', label: 'Highlights' },
     { href: '/gallery', label: 'Gallery' },
-    { href: '/join', label: 'Join Us' },
+    { href: '/contact', label: 'Contact Us' },
   ];
 
   const adminLinks = [

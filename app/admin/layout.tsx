@@ -93,16 +93,23 @@ function AdminNavbar({ sidebarOpen, setSidebarOpen }: any) {
 function AdminSidebar({ sidebarOpen, setSidebarOpen }: any) {
   const pathname = usePathname();
 
-  const links = [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/events', label: 'Events', icon: Calendar },
-    { href: '/admin/team', label: 'Team', icon: Users },
-    { href: '/admin/members', label: 'Members', icon: GraduationCap },
-    { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon },
-    { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb },
-    { href: '/admin/notifications', label: 'Notifications', icon: Bell },
-    { href: '/admin/highlights', label: 'Highlights', icon: Sparkles },
+  const { getRole } = useAuth();
+  const role = getRole();
+
+  const allLinks = [
+    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, roles: ['all'] },
+    { href: '/admin/events', label: 'Events', icon: Calendar, roles: ['Faculty', 'President', 'Vice President', 'Event Head'] },
+    { href: '/admin/team', label: 'Team', icon: Users, roles: ['Faculty', 'President', 'Vice President', 'Tech'] },
+    { href: '/admin/members', label: 'Members', icon: GraduationCap, roles: ['Faculty', 'President', 'Vice President', 'Discipline', 'Tech'] },
+    { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon, roles: ['Faculty', 'President', 'Vice President', 'Media', 'Stage'] },
+    { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb, roles: ['Faculty', 'President', 'Vice President'] },
+    { href: '/admin/notifications', label: 'Notifications', icon: Bell, roles: ['all'] },
+    { href: '/admin/highlights', label: 'Highlights', icon: Sparkles, roles: ['Faculty', 'President', 'Vice President', 'Media', 'Editor'] },
   ];
+
+  const links = allLinks.filter(link =>
+    link.roles.includes('all') || (role && link.roles.includes(role))
+  );
 
   return (
     <>
@@ -116,25 +123,23 @@ function AdminSidebar({ sidebarOpen, setSidebarOpen }: any) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-white dark:bg-dark-card border-r border-gray-200 dark:border-dark-border overflow-y-auto z-20 transition-transform duration-300 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0`}
+        className={`fixed left-0 top-16 w-64 h-[calc(100vh-4rem)] bg-white dark:bg-dark-card border-r border-gray-200 dark:border-dark-border overflow-y-auto z-20 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0`}
       >
         <nav className="p-4 space-y-1">
           {links.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
-            
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                  isActive
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
                     ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-semibold shadow-sm'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
+                  }`}
               >
                 <Icon size={20} className={isActive ? 'text-primary-600 dark:text-primary-400' : ''} />
                 <span className="font-medium">{link.label}</span>
