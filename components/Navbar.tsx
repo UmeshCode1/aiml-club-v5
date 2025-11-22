@@ -103,7 +103,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center space-x-3">
             <div className="relative w-10 h-10">
               <Image
-                src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aimllogo/view?project=691e2b31003e6415bb4f"
+                src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aiml-logo/view?project=691e2b31003e6415bb4f"
                 alt="AIML Club Logo"
                 fill
                 className="object-contain"
