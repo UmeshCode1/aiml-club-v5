@@ -224,33 +224,34 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
             onError={() => setImageError(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-
-          {/* Social Links Overlay */}
-          {socialLinks.length > 0 && (
-            <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-              {socialLinks.map((link, i) => (
-                <a
-                  key={i}
-                  href={link.url!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-colors border border-white/20"
-                  aria-label={link.label}
-                >
-                  <link.icon className="w-5 h-5 text-white" />
-                </a>
-              ))}
-            </div>
-          )}
         </div>
 
         <CardHeader className="flex-1">
           <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
             {member.name}
           </h3>
-          <p className="text-sm text-purple-400 font-medium mb-2">{member.role}</p>
+          <p className="text-sm text-purple-400 font-medium mb-3">{member.role}</p>
           {member.bio && (
-            <p className="text-sm text-gray-400 line-clamp-3">{member.bio}</p>
+            <p className="text-sm text-gray-400 line-clamp-2 mb-3">{member.bio}</p>
+          )}
+
+          {/* Social Links - Always Visible */}
+          {socialLinks.length > 0 && (
+            <div className="flex items-center gap-2 mt-auto pt-3 border-t border-white/10">
+              {socialLinks.map((link, i) => (
+                <a
+                  key={i}
+                  href={link.url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors border border-white/10 hover:border-purple-400/50"
+                  aria-label={link.label}
+                  title={link.label}
+                >
+                  <link.icon className="w-4 h-4 text-gray-400 hover:text-purple-400 transition-colors" />
+                </a>
+              ))}
+            </div>
           )}
         </CardHeader>
       </Card>
