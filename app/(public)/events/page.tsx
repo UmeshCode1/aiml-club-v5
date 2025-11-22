@@ -179,7 +179,7 @@ export default function EventsPage() {
             <Sparkles className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No highlights yet</h3>
             <p className="text-gray-500 dark:text-gray-400">
-              We'll be sharing exciting stories and updates soon!
+              We&apos;ll be sharing exciting stories and updates soon!
             </p>
           </div>
         ) : (

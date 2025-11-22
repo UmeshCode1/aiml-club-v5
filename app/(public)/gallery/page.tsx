@@ -193,7 +193,7 @@ export default function GalleryPage() {
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Albums Yet</h3>
               <p className="text-gray-500 dark:text-gray-400">
-                We haven't uploaded any albums yet. Check back soon!
+                We haven&apos;t uploaded any albums yet. Check back soon!
               </p>
             </div>
           )}
