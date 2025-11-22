@@ -37,7 +37,7 @@ export default function Home() {
               <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl shadow-xl p-4 flex items-center justify-center hover:scale-105 transition-transform duration-300">
                 <div className="relative w-full h-full">
                   <Image
-                    src="/images/logo.png"
+                    src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/college-logo/view?project=691e2b31003e6415bb4f&mode=admin"
                     alt="OCT Logo"
                     fill
                     className="object-contain"
@@ -194,3 +194,4 @@ function StatItem({ number, label, delay }: { number: string; label: string; del
     </motion.div>
   );
 }
+
