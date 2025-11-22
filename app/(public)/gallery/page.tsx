@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import Loader from '@/components/ui/Loader';
 
 const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;

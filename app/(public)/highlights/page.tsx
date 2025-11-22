@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Calendar, User, ArrowRight } from 'lucide-react';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import Loader from '@/components/ui/Loader';
 import { highlightService, Highlight } from '@/lib/database';
 import { formatDate } from '@/lib/utils';

@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { 
-  Users, 
-  Calendar, 
-  MessageSquare, 
-  Image as ImageIcon, 
-  UserPlus, 
-  Upload, 
-  Bell 
+import {
+  Users,
+  Calendar,
+  MessageSquare,
+  Image as ImageIcon,
+  UserPlus,
+  Upload,
+  Bell
 } from 'lucide-react';
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import {
   memberService,
   eventService,

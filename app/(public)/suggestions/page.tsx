@@ -6,7 +6,7 @@ import { MessageSquare, Send, Lock, User } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 // We will submit via server API to allow public submissions
 import toast from 'react-hot-toast';
 
@@ -115,14 +115,12 @@ export default function SuggestionsPage() {
                 <button
                   type="button"
                   onClick={() => setAnonymous(!anonymous)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    anonymous ? 'bg-primary-600' : 'bg-gray-300'
-                  }`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${anonymous ? 'bg-primary-600' : 'bg-gray-300'
+                    }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      anonymous ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${anonymous ? 'translate-x-6' : 'translate-x-1'
+                      }`}
                   />
                 </button>
               </div>

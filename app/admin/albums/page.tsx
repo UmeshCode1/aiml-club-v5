@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Eye, EyeOff, Calendar, Image as ImageIcon, RefreshCw } from 'lucide-react';
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -155,8 +155,8 @@ export default function AlbumsAdmin() {
                 <button
                     onClick={() => setFilter('all')}
                     className={`px-4 py-2 rounded-lg transition-colors ${filter === 'all'
-                            ? 'bg-primary-500 text-white'
-                            : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                         }`}
                 >
                     All ({albums.length})
@@ -170,8 +170,8 @@ export default function AlbumsAdmin() {
                             key={key}
                             onClick={() => setFilter(key)}
                             className={`px-4 py-2 rounded-lg transition-colors ${filter === key
-                                    ? 'bg-primary-500 text-white'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                                ? 'bg-primary-500 text-white'
+                                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                                 }`}
                         >
                             {label} ({count})
@@ -209,8 +209,8 @@ export default function AlbumsAdmin() {
                                 {/* Status Badge */}
                                 <div className="absolute top-3 right-3">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${album.isPublished
-                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                            : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                        : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
                                         }`}>
                                         {album.isPublished ? 'Published' : 'Draft'}
                                     </span>

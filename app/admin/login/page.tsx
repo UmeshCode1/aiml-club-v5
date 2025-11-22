@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Upload, Trash2, Image as ImageIcon, RefreshCw } from 'lucide-react';
-import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { storageService, BUCKETS } from '@/lib/database';
 import Image from 'next/image';
 
