@@ -15,6 +15,7 @@ export const PROJECT_CONFIG = {
         NOTIFICATIONS: process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATIONS || '',
         SUBSCRIBERS: process.env.NEXT_PUBLIC_COLLECTION_SUBSCRIBERS || '',
         MESSAGES: process.env.NEXT_PUBLIC_COLLECTION_MESSAGES || '',
+        BLOG: process.env.NEXT_PUBLIC_COLLECTION_BLOG || '',
     },
     BUCKETS: {
         IMAGES: 'images',

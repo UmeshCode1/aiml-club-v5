@@ -60,6 +60,7 @@ export default function Navbar() {
     {
       label: 'Resources',
       children: [
+        { href: '/blog', label: 'Blog' },
         { href: '/suggestions', label: 'Suggestion Box' },
         { href: 'https://drive.google.com', label: 'Media Drive', external: true },
         { href: '/constitution', label: 'Constitution' },
