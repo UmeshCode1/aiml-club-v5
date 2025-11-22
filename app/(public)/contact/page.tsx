@@ -34,7 +34,7 @@ export default function ContactPage() {
           Get in Touch
         </h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
-          Have questions about the AI/ML Club? Want to collaborate? Send us a message and we'll get back to you.
+          Have questions about the AI/ML Club? Want to collaborate? Send us a message and we&apos;ll get back to you.
         </p>
       </div>
 
@@ -157,7 +157,7 @@ export default function ContactPage() {
 
               <h3 className="text-2xl font-bold mb-3">Want to be a core member?</h3>
               <p className="text-white/90 mb-8 leading-relaxed">
-                Join our team of passionate developers, designers, and AI enthusiasts. We're always looking for new talent to help us grow.
+                Join our team of passionate developers, designers, and AI enthusiasts. We&apos;re always looking for new talent to help us grow.
               </p>
 
               <a

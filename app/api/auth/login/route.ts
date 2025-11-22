@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/appwrite';
+import { createAdminClient } from '@/lib/appwrite-admin';
 import { cookies } from 'next/headers';
 
 export async function POST(request: NextRequest) {
@@ -7,10 +7,10 @@ export async function POST(request: NextRequest) {
     const { email, password } = await request.json();
 
     const { account } = await createAdminClient();
-    
+
     // Create session
     const session = await account.createEmailPasswordSession(email, password);
-    
+
     // Set session cookie
     const cookieStore = await cookies();
     cookieStore.set('session', session.secret, {
