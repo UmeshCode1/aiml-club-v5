@@ -273,7 +273,7 @@ function HeroSection() {
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-primary-500/30 to-secondary-500/30 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
 
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 md:p-4 shadow-2xl border-2 border-gray-100 dark:border-gray-800 group-hover:border-primary-300 dark:group-hover:border-primary-700 transition-all duration-300 group-hover:scale-110">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gray-900/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 md:p-4 shadow-2xl border-2 border-white/10 group-hover:border-primary-500/50 transition-all duration-300 group-hover:scale-110">
                 <Image
                   src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aiml-logo/view?project=691e2b31003e6415bb4f"
                   alt="AIML Club Logo"
@@ -292,7 +292,7 @@ function HeroSection() {
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-secondary-500/30 to-primary-500/30 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500 opacity-0 group-hover:opacity-100" />
 
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 md:p-4 shadow-2xl border-2 border-gray-100 dark:border-gray-800 group-hover:border-secondary-300 dark:group-hover:border-secondary-700 transition-all duration-300 group-hover:scale-110">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-gray-900/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 md:p-4 shadow-2xl border-2 border-white/10 group-hover:border-secondary-500/50 transition-all duration-300 group-hover:scale-110">
                 <Image
                   src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/college-logo/view?project=691e2b31003e6415bb4f"
                   alt="OCT Logo"
