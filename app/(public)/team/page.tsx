@@ -195,16 +195,16 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
 
   const getImageUrl = () => {
     if (imageError || !member.photoId) {
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=7c3aed&color=fff&size=400`;
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=7c3aed&color=fff&size=400&bold=true&font-size=0.4`;
     }
     return getPreviewUrl(member.photoId, 400, 400, BUCKETS.TEAM);
   };
 
   const socialLinks = [
-    { icon: Instagram, url: member.instagram, label: 'Instagram' },
-    { icon: Linkedin, url: member.linkedin, label: 'LinkedIn' },
-    { icon: Github, url: member.github, label: 'GitHub' },
-    { icon: Mail, url: member.email ? `mailto:${member.email}` : null, label: 'Email' },
+    { icon: Instagram, url: member.instagram, label: 'Instagram', color: 'hover:text-pink-400' },
+    { icon: Linkedin, url: member.linkedin, label: 'LinkedIn', color: 'hover:text-blue-400' },
+    { icon: Github, url: member.github, label: 'GitHub', color: 'hover:text-gray-300' },
+    { icon: Mail, url: member.email ? `mailto:${member.email}` : null, label: 'Email', color: 'hover:text-green-400' },
   ].filter(link => link.url);
 
   return (
@@ -212,48 +212,68 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.05 }}
+      className="h-full"
     >
-      <Card hover className="group overflow-hidden h-full flex flex-col">
-        {/* Photo */}
-        <div className="relative h-64 w-full overflow-hidden">
+      <Card hover className="group overflow-hidden h-full flex flex-col bg-gradient-to-br from-gray-900/50 to-gray-800/30 border-white/10">
+        {/* Photo Section */}
+        <div className="relative h-72 w-full overflow-hidden bg-gradient-to-br from-purple-900/20 to-blue-900/20">
           <Image
             src={getImageUrl()}
             alt={member.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
             onError={() => setImageError(true)}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-90" />
+
+          {/* Floating Badge */}
+          <div className="absolute top-4 right-4 z-10">
+            <div className="px-3 py-1 rounded-full bg-purple-500/90 backdrop-blur-sm text-xs font-bold text-white shadow-lg">
+              {member.category.replace('_', ' ').toUpperCase()}
+            </div>
+          </div>
         </div>
 
-        <CardHeader className="flex-1">
-          <h3 className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">
-            {member.name}
-          </h3>
-          <p className="text-sm text-purple-400 font-medium mb-3">{member.role}</p>
+        {/* Content Section */}
+        <CardContent className="flex-1 flex flex-col p-6 text-center">
+          {/* Name & Role */}
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300">
+              {member.name}
+            </h3>
+            <p className="text-sm font-semibold text-purple-400 uppercase tracking-wide">
+              {member.role}
+            </p>
+          </div>
+
+          {/* Bio */}
           {member.bio && (
-            <p className="text-sm text-gray-400 line-clamp-2 mb-3">{member.bio}</p>
+            <p className="text-sm text-gray-400 line-clamp-2 mb-4 px-2">
+              {member.bio}
+            </p>
           )}
 
-          {/* Social Links - Always Visible */}
+          {/* Social Links */}
           {socialLinks.length > 0 && (
-            <div className="flex items-center gap-2 mt-auto pt-3 border-t border-white/10">
-              {socialLinks.map((link, i) => (
-                <a
-                  key={i}
-                  href={link.url!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors border border-white/10 hover:border-purple-400/50"
-                  aria-label={link.label}
-                  title={link.label}
-                >
-                  <link.icon className="w-4 h-4 text-gray-400 hover:text-purple-400 transition-colors" />
-                </a>
-              ))}
+            <div className="mt-auto pt-4 border-t border-white/10">
+              <div className="flex items-center justify-center gap-2">
+                {socialLinks.map((link, i) => (
+                  <a
+                    key={i}
+                    href={link.url!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`p-2.5 bg-white/5 rounded-lg hover:bg-white/10 transition-all duration-300 border border-white/10 hover:border-purple-400/50 hover:scale-110 hover:shadow-lg hover:shadow-purple-500/20 ${link.color}`}
+                    aria-label={link.label}
+                    title={link.label}
+                  >
+                    <link.icon className="w-4 h-4 text-gray-400 transition-colors" />
+                  </a>
+                ))}
+              </div>
             </div>
           )}
-        </CardHeader>
+        </CardContent>
       </Card>
     </motion.div>
   );
