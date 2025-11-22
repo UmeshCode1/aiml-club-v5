@@ -8,14 +8,15 @@ import { Menu, X, Bell, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Button from './ui/Button';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { resolvedTheme, setTheme } = useTheme();
 
   const isAdminRoute = pathname?.startsWith('/admin');
 
@@ -26,14 +27,6 @@ export default function Navbar() {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const theme = localStorage.getItem('theme');
-    setIsDark(theme === 'dark');
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    }
   }, []);
 
   useEffect(() => {
@@ -57,15 +50,7 @@ export default function Navbar() {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   const navLinks = [
@@ -143,7 +128,7 @@ export default function Navbar() {
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-110 group"
               aria-label="Toggle theme"
             >
-              {isDark ? (
+              {resolvedTheme === 'dark' ? (
                 <Sun className="w-5 h-5 text-yellow-500 group-hover:rotate-180 transition-transform duration-500" />
               ) : (
                 <Moon className="w-5 h-5 text-gray-700 group-hover:-rotate-12 transition-transform duration-500" />
