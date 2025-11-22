@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Users, Code, Brain, ChevronRight } from 'lucide-react';
+import AboutSection from '@/components/AboutSection';
+import AnimatedBackground from '@/components/AnimatedBackground';
 
 export default function Home() {
   return (
@@ -102,6 +104,9 @@ export default function Home() {
         </motion.div>
       </section>
 
+      <AnimatedBackground />
+      <AboutSection />
+
       {/* Features Grid */}
       <section className="py-24 bg-black/20 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -194,4 +199,3 @@ function StatItem({ number, label, delay }: { number: string; label: string; del
     </motion.div>
   );
 }
-
