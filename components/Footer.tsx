@@ -67,6 +67,7 @@ export default function Footer() {
     { name: 'Highlights', href: '/highlights' },
     { name: 'Gallery', href: '/gallery' },
     { name: 'Contact Us', href: '/contact' },
+    { name: 'Admin Login', href: '/admin/login' },
   ];
 
   const importantLinks = [
