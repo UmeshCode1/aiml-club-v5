@@ -8,9 +8,18 @@ export const PROJECT_CONFIG = {
         TEAM: process.env.NEXT_PUBLIC_COLLECTION_TEAM || '',
         EVENTS: process.env.NEXT_PUBLIC_COLLECTION_EVENTS || '',
         GALLERY: process.env.NEXT_PUBLIC_COLLECTION_GALLERY || '',
+        ALBUMS: process.env.NEXT_PUBLIC_COLLECTION_ALBUMS || '',
+        HIGHLIGHTS: process.env.NEXT_PUBLIC_COLLECTION_HIGHLIGHTS || '',
+        MEMBERS: process.env.NEXT_PUBLIC_COLLECTION_MEMBERS || '',
+        SUGGESTIONS: process.env.NEXT_PUBLIC_COLLECTION_SUGGESTIONS || '',
+        NOTIFICATIONS: process.env.NEXT_PUBLIC_COLLECTION_NOTIFICATIONS || '',
+        SUBSCRIBERS: process.env.NEXT_PUBLIC_COLLECTION_SUBSCRIBERS || '',
+        MESSAGES: process.env.NEXT_PUBLIC_COLLECTION_MESSAGES || '',
     },
     BUCKETS: {
-        IMAGES: 'images', // As requested in Part 1
+        IMAGES: 'images',
+        ALBUM_COVERS: 'album-covers',
+        TEAM: 'team',
     },
 };
 
@@ -41,16 +50,17 @@ export function subscribeToCollection(collectionId: string, callback: (response:
  * @param fileId The file ID
  * @param width Optional width
  * @param height Optional height
+ * @param bucketId Optional bucket ID (defaults to IMAGES)
  * @returns The image URL
  */
-export function getPreviewUrl(fileId: string, width?: number, height?: number) {
+export function getPreviewUrl(fileId: string, width?: number, height?: number, bucketId?: string) {
     try {
         if (!fileId) return '';
         // If it's already a URL, return it
         if (fileId.startsWith('http')) return fileId;
 
         return storage.getFilePreview(
-            PROJECT_CONFIG.BUCKETS.IMAGES,
+            bucketId || PROJECT_CONFIG.BUCKETS.IMAGES,
             fileId,
             width,
             height

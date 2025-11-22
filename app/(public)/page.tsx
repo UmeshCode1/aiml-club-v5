@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Users, Code, Brain, ChevronRight } from 'lucide-react';
 
@@ -21,20 +22,57 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block py-1 px-3 rounded-full bg-white/5 border border-white/10 text-sm text-purple-400 mb-6 backdrop-blur-sm">
-              Welcome to the Future
-            </span>
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-400">
-                AI & ML Club
-              </span>
-              <br />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-500">
-                Innovate. Create. Inspire.
+            {/* Logos */}
+            <div className="flex justify-center gap-6 mb-8">
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl shadow-xl p-4 flex items-center justify-center hover:scale-105 transition-transform duration-300">
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/images/logo-aiml.png"
+                    alt="AIML Club Logo"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-2xl shadow-xl p-4 flex items-center justify-center hover:scale-105 transition-transform duration-300">
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/images/logo.png"
+                    alt="OCT Logo"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-bold mb-4 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600">
+                AI
+              </span>{' '}
+              <span className="text-white">&</span>{' '}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600">
+                Machine Learning
+              </span>{' '}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-600">
+                Club
               </span>
             </h1>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Join a community of forward-thinking students passionate about Artificial Intelligence and Machine Learning. Let&apos;s build the future together.
+
+            <p className="text-xl md:text-2xl text-gray-300 font-medium mb-8">
+              Oriental College of Technology, Bhopal
+            </p>
+
+            <div className="text-2xl md:text-3xl font-light italic mb-8">
+              <span className="text-blue-400">Innovate</span>
+              <span className="text-gray-500 mx-2">•</span>
+              <span className="text-purple-400">Implement</span>
+              <span className="text-gray-500 mx-2">•</span>
+              <span className="text-cyan-400">Inspire</span>
+            </div>
+
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+              Join us in exploring the fascinating world of Artificial Intelligence and Machine Learning. Learn, build, and innovate together.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

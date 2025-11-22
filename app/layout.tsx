@@ -22,6 +22,11 @@ export const metadata: Metadata = {
   authors: [{ name: 'AIML Club OCT' }],
   // Provides absolute base for Open Graph/Twitter image and canonical URL resolution
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aimlcluboct.vercel.app'),
+  icons: {
+    icon: '/images/logo-aiml.png',
+    shortcut: '/images/logo-aiml.png',
+    apple: '/images/logo-aiml.png',
+  },
   openGraph: {
     title: 'AI & ML Club - OCT Bhopal',
     description: 'Innovate • Implement • Inspire',
@@ -29,7 +34,7 @@ export const metadata: Metadata = {
     siteName: 'AIML Club OCT',
     images: [
       {
-        url: '/images/logo aiml.png',
+        url: '/images/logo-aiml.png',
         width: 1200,
         height: 630,
         alt: 'AIML Club OCT',
@@ -42,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'AI & ML Club - OCT Bhopal',
     description: 'Innovate • Implement • Inspire',
-    images: ['/images/logo aiml.png'],
+    images: ['/images/logo-aiml.png'],
   },
 };
 

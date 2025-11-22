@@ -55,7 +55,6 @@ export default function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/team', label: 'Team' },
     { href: '/events', label: 'Events' },
-    { href: '/highlights', label: 'Highlights' },
     { href: '/gallery', label: 'Gallery' },
     {
       label: 'Resources',

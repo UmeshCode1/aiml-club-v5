@@ -3,162 +3,203 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { ExternalLink, FolderOpen, Eye, Image as ImageIcon, Layers } from 'lucide-react';
+import { client, databases, COLLECTIONS, BUCKETS, subscribeToCollection, getPreviewUrl } from '@/lib/appwrite';
+import { Query } from 'appwrite';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
-import Loader from '@/components/ui/Loader';
+import Button from '@/components/ui/Button';
 
-const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!;
-const project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!;
-const bucketId = process.env.NEXT_PUBLIC_BUCKET_GALLERY!;
-
-interface Doc { id: string; title: string; fileId: string; }
-
-function previewUrl(fileId: string, w = 800) {
-  return `${endpoint}/storage/buckets/${bucketId}/files/${fileId}/preview?project=${project}&width=${w}&quality=80`;
+interface Album {
+  $id: string;
+  title: string;
+  date: string;
+  cover_image_url: string;
+  photo_count: number;
+  link?: string;
 }
 
 export default function GalleryPage() {
-  const [docs, setDocs] = useState<Doc[]>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    loadGallery();
+    fetchAlbums();
+
+    // Real-time subscription
+    const unsubscribe = subscribeToCollection(COLLECTIONS.ALBUMS, (response) => {
+      if (response.events.includes('databases.*.collections.*.documents.*.create')) {
+        setAlbums((prev) => [response.payload as Album, ...prev]);
+      } else if (response.events.includes('databases.*.collections.*.documents.*.update')) {
+        setAlbums((prev) =>
+          prev.map((album) => (album.$id === response.payload.$id ? (response.payload as Album) : album))
+        );
+      } else if (response.events.includes('databases.*.collections.*.documents.*.delete')) {
+        setAlbums((prev) => prev.filter((album) => album.$id !== response.payload.$id));
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
-  const loadGallery = async () => {
+  const fetchAlbums = async () => {
     try {
-      const res = await fetch('/api/gallery');
-      const data = await res.json();
-      setDocs(data.docs || []);
+      const response = await databases.listDocuments(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+        COLLECTIONS.ALBUMS,
+        [Query.orderDesc('date')]
+      );
+      setAlbums(response.documents as unknown as Album[]);
     } catch (error) {
-      console.error('Error loading gallery:', error);
+      console.error('Error fetching albums:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <Loader fullscreen />;
+  // Helper to get image source (URL or File ID)
+  const getImageSrc = (album: Album) => {
+    if (!album.cover_image_url) return '/images/placeholder-album.jpg'; // Fallback
+    if (album.cover_image_url.startsWith('http')) return album.cover_image_url;
+    // If it's a file ID, use the album-covers bucket or images bucket
+    // We'll try album-covers first, but getPreviewUrl defaults to IMAGES bucket in lib/appwrite.ts
+    // So we might need to manually construct it if it's in a different bucket
+    // For now, assuming user puts full URL or file ID in IMAGES bucket as per previous pattern
+    return getPreviewUrl(album.cover_image_url, 800, 600, BUCKETS.ALBUM_COVERS);
+  };
 
   return (
-    <>
-      <div className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-16">
+    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto">
+
+        {/* Header & Actions */}
+        <div className="flex flex-col items-center text-center mb-16 space-y-8">
+          <div>
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Event <span className="gradient-text">Gallery</span>
+              Event <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-secondary-500">Gallery</span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Moments captured from our workshops, events, and activities
+              Explore moments captured from our workshops, hackathons, and community events.
             </p>
           </div>
 
-          {/* Gallery Grid */}
-          {docs.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {docs.map((doc, index) => (
-                <GalleryImage
-                  key={doc.id}
-                  doc={doc}
-                  index={index}
-                  onClick={() => setSelectedImage(previewUrl(doc.fileId, 1600))}
-                />
+          {/* Action Buttons */}
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="https://drive.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-3 text-sm font-medium text-white backdrop-blur-3xl transition-all group-hover:bg-slate-900">
+                  <ExternalLink className="w-5 h-5 mr-2 text-blue-400" />
+                  View on Drive
+                </span>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-3 text-sm font-medium text-white backdrop-blur-3xl transition-all group-hover:bg-slate-900">
+                  <FolderOpen className="w-5 h-5 mr-2 text-yellow-400" />
+                  Media Records
+                </span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        {/* Recent Albums Section */}
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+              <Layers className="w-8 h-8 mr-3 text-primary-500" />
+              Recent Albums
+            </h2>
+            <div className="h-1 flex-1 mx-6 bg-gradient-to-r from-primary-500/20 to-transparent rounded-full"></div>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-80 rounded-2xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
+              ))}
+            </div>
+          ) : albums.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {albums.map((album, index) => (
+                <motion.div
+                  key={album.$id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card className="group h-full overflow-hidden border-0 bg-white/5 dark:bg-white/5 backdrop-blur-sm hover:shadow-2xl hover:shadow-primary-500/10 transition-all duration-500">
+                    {/* Cover Image */}
+                    <div className="relative h-64 overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                      <Image
+                        src={getImageSrc(album)}
+                        alt={album.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+
+                      {/* Overlay Content */}
+                      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 className="text-2xl font-bold text-white mb-2 line-clamp-1">{album.title}</h3>
+                        <div className="flex items-center text-gray-300 text-sm space-x-4">
+                          <span>{format(new Date(album.date), 'MMMM yyyy')}</span>
+                          <span className="w-1 h-1 bg-gray-400 rounded-full" />
+                          <span className="flex items-center">
+                            <ImageIcon className="w-4 h-4 mr-1" />
+                            {album.photo_count} photos
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* View Button Overlay */}
+                      <div className="absolute inset-0 z-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                        <a
+                          href={album.link || '#'}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300"
+                        >
+                          <Button variant="primary" className="rounded-full px-8">
+                            <Eye className="w-4 h-4 mr-2" />
+                            View Album
+                          </Button>
+                        </a>
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center py-20"
-            >
-              <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900/50 dark:to-secondary-900/50 mb-6">
-                <svg className="w-12 h-12 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+            <div className="text-center py-20 bg-white/5 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 mb-6">
+                <Layers className="w-10 h-10 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-200">
-                Gallery Coming Soon
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-                We&apos;ll be adding photos from our events and activities soon. Check back later!
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Albums Yet</h3>
+              <p className="text-gray-500 dark:text-gray-400">
+                We haven't uploaded any albums yet. Check back soon!
               </p>
-            </motion.div>
+            </div>
           )}
         </div>
+
       </div>
-
-      {/* Lightbox */}
-      {selectedImage && (
-        <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />
-      )}
-    </>
-  );
-}
-
-function GalleryImage({ doc, index, onClick }: { doc: Doc; index: number; onClick: () => void }) {
-  const [loaded, setLoaded] = useState(false);
-  const imageUrl = previewUrl(doc.fileId);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-      whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-      onClick={onClick}
-      className="relative aspect-square overflow-hidden rounded-xl cursor-pointer group shadow-lg hover:shadow-2xl transition-all duration-500"
-    >
-      <div className={`relative w-full h-full ${loaded ? '' : 'animate-pulse bg-gradient-to-br from-primary-200 via-secondary-200 to-primary-300 dark:from-primary-900 dark:via-secondary-900 dark:to-primary-800 animate-gradient-xy'}`}>
-        <Image
-          src={imageUrl}
-          alt={doc.title || 'Gallery image'}
-          fill
-          className={`object-cover group-hover:scale-110 transition-all duration-500 ${loaded ? 'blur-0' : 'blur-sm'}`}
-          onLoad={() => setLoaded(true)}
-        />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-end pb-6">
-        <div className="text-white font-semibold text-lg mb-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-          {doc.title || 'View Image'}
-        </div>
-        <div className="w-12 h-1 bg-white rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300" />
-      </div>
-    </motion.div>
-  );
-}
-
-function Lightbox({ image, onClose }: { image: string; onClose: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <button
-        onClick={onClose}
-        className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all duration-300 hover:scale-110 group"
-      >
-        <X className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" />
-      </button>
-
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="relative max-w-6xl max-h-[90vh] w-full h-full"
-      >
-        <Image
-          src={image}
-          alt="Gallery Image"
-          fill
-          className="object-contain drop-shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        />
-      </motion.div>
-    </motion.div>
+    </div>
   );
 }

@@ -18,6 +18,7 @@ export interface Event {
   slug: string;
   type: 'Talk' | 'Session' | 'Workshop' | 'Test' | 'Event' | 'Hackathon' | 'Guest Lecture' | 'Orientation';
   gallery?: string[];
+  drive_link?: string;
   $createdAt?: string;
   $updatedAt?: string;
 }
@@ -156,6 +157,7 @@ export interface TeamMember {
   instagram?: string;
   linkedin?: string;
   github?: string;
+  bio?: string;
   order: number;
   $createdAt?: string;
   $updatedAt?: string;
