@@ -145,6 +145,20 @@ export default function ContactPage() {
             </div>
           </div>
 
+          {/* Google Maps Embed */}
+          <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-lg h-64">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3663.056396484375!2d77.4647216!3d23.3500003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c41c0b0b0b0b1%3A0x3f0b0b0b0b0b0b0b!2sOriental%20College%20of%20Technology!5e0!3m2!1sen!2sin!4v1629876543210!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Oriental College of Technology Location"
+            />
+          </div>
+
           {/* Recruitment Card */}
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-600 to-secondary-600 p-8 text-white shadow-2xl shadow-primary-500/20 transform hover:scale-[1.02] transition-all duration-300">
             <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/20 rounded-full blur-3xl" />
