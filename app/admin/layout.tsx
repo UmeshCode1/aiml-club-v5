@@ -17,6 +17,7 @@ import {
   LogOut,
   Menu,
   X,
+  Mail,
 } from 'lucide-react';
 
 export default function AdminLayout({
@@ -104,6 +105,7 @@ function AdminSidebar({ sidebarOpen, setSidebarOpen }: any) {
     { href: '/admin/gallery', label: 'Gallery', icon: ImageIcon, roles: ['Faculty', 'President', 'Vice President', 'Media', 'Stage'] },
     { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb, roles: ['Faculty', 'President', 'Vice President'] },
     { href: '/admin/notifications', label: 'Notifications', icon: Bell, roles: ['all'] },
+    { href: '/admin/messages', label: 'Messages', icon: Mail, roles: ['Faculty', 'President', 'Vice President'] },
     { href: '/admin/highlights', label: 'Highlights', icon: Sparkles, roles: ['Faculty', 'President', 'Vice President', 'Media', 'Editor'] },
   ];
 
@@ -137,8 +139,8 @@ function AdminSidebar({ sidebarOpen, setSidebarOpen }: any) {
                 href={link.href}
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
-                    ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-semibold shadow-sm'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400'
+                  ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 font-semibold shadow-sm'
+                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400'
                   }`}
               >
                 <Icon size={20} className={isActive ? 'text-primary-600 dark:text-primary-400' : ''} />

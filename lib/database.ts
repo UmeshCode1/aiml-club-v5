@@ -443,3 +443,69 @@ export const storageService = {
     return await storage.listFiles(bucketId);
   },
 };
+
+// ==================== MESSAGES ====================
+
+export interface Message {
+  $id?: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: 'unread' | 'read' | 'replied';
+  $createdAt?: string;
+  $updatedAt?: string;
+}
+
+export const messageService = {
+  create: async (data: Omit<Message, '$id'>) => {
+    return await databases.createDocument(
+      DATABASE_ID,
+      COLLECTIONS.MESSAGES!,
+      ID.unique(),
+      data
+    );
+  },
+
+  update: async (id: string, data: Partial<Message>) => {
+    return await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTIONS.MESSAGES!,
+      id,
+      data
+    );
+  },
+
+  delete: async (id: string) => {
+    return await databases.deleteDocument(
+      DATABASE_ID,
+      COLLECTIONS.MESSAGES!,
+      id
+    );
+  },
+
+  list: async () => {
+    return await databases.listDocuments(
+      DATABASE_ID,
+      COLLECTIONS.MESSAGES!,
+      [Query.orderDesc('$createdAt'), Query.limit(100)]
+    );
+  },
+
+  getUnread: async () => {
+    return await databases.listDocuments(
+      DATABASE_ID,
+      COLLECTIONS.MESSAGES!,
+      [Query.equal('status', 'unread'), Query.orderDesc('$createdAt')]
+    );
+  },
+
+  markAsRead: async (id: string) => {
+    return await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTIONS.MESSAGES!,
+      id,
+      { status: 'read' }
+    );
+  },
+};

@@ -72,16 +72,16 @@ export default function NotificationsPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
                                 className={`bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm border-l-4 ${notification.type === 'success' ? 'border-green-500' :
-                                        notification.type === 'warning' ? 'border-yellow-500' :
-                                            notification.type === 'error' ? 'border-red-500' :
-                                                'border-primary-500'
+                                    notification.type === 'warning' ? 'border-yellow-500' :
+                                        notification.type === 'error' ? 'border-red-500' :
+                                            'border-primary-500'
                                     }`}
                             >
                                 <div className="flex items-start gap-4">
                                     <div className={`p-2 rounded-full ${notification.type === 'success' ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
-                                            notification.type === 'warning' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                                                notification.type === 'error' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' :
-                                                    'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
+                                        notification.type === 'warning' ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                            notification.type === 'error' ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' :
+                                                'bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
                                         }`}>
                                         {notification.type === 'success' ? <Bell className="w-5 h-5" /> :
                                             notification.type === 'warning' ? <AlertCircle className="w-5 h-5" /> :
@@ -114,7 +114,7 @@ export default function NotificationsPage() {
                             No notifications
                         </h3>
                         <p className="text-gray-500 dark:text-gray-400">
-                            You're all caught up! Check back later for updates.
+                            You&apos;re all caught up! Check back later for updates.
                         </p>
                     </div>
                 )}

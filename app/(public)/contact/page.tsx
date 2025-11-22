@@ -2,289 +2,206 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { UserPlus, Mail, Phone, BookOpen } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Textarea from '@/components/ui/Textarea';
-import Card from '@/components/ui/Card';
-import { memberService } from '@/lib/database';
-import { isValidEmail, isValidPhone } from '@/lib/utils';
-import toast from 'react-hot-toast';
+import { Send, Mail, User, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 
-export default function JoinPage() {
-  const [loading, setLoading] = useState(false);
+export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    semester: '',
-    course: '',
-    reason: '',
-    subscribe: true,
+    subject: '',
+    message: '',
   });
-
-  const [errors, setErrors] = useState<any>({});
-
-  const validate = () => {
-    const newErrors: any = {};
-
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Invalid email address';
-    }
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!isValidPhone(formData.phone)) {
-      newErrors.phone = 'Invalid phone number (10 digits)';
-    }
-    if (!formData.semester) newErrors.semester = 'Semester is required';
-    if (!formData.course.trim()) newErrors.course = 'Course is required';
-    if (!formData.reason.trim()) newErrors.reason = 'Please tell us why you want to join';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validate()) {
-      toast.error('Please fix the errors in the form');
-      return;
-    }
-
-    setLoading(true);
+    setStatus('submitting');
 
     try {
-      await memberService.create({
-        ...formData,
-        status: 'Pending',
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      toast.success('Application submitted successfully! We\'ll contact you soon.');
+      const data = await res.json();
 
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        semester: '',
-        course: '',
-        reason: '',
-        subscribe: true,
-      });
-      setErrors({});
+      if (!res.ok) throw new Error(data.error || 'Something went wrong');
+
+      setStatus('success');
+      setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error: any) {
-      toast.error(error.message || 'Failed to submit application');
-    } finally {
-      setLoading(false);
+      setStatus('error');
+      setErrorMessage(error.message);
     }
   };
 
   return (
-    <div className="py-20 bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-dark-bg dark:via-dark-card dark:to-dark-bg min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl -z-10" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl -z-10" />
+
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 mb-6">
-            <UserPlus className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-            Join <span className="gradient-text">AIML Club</span>
+          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 mb-4">
+            Get in Touch
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Be part of an innovative community passionate about AI and Machine Learning
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Have questions about the AI/ML Club? Want to collaborate? Send us a message and we'll get back to you properly.
           </p>
         </motion.div>
 
-        {/* Benefits */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-        >
-          <BenefitCard
-            icon={<BookOpen className="w-6 h-6" />}
-            title="Learn & Grow"
-            description="Access exclusive workshops and learning resources"
-          />
-          <BenefitCard
-            icon={<UserPlus className="w-6 h-6" />}
-            title="Network"
-            description="Connect with like-minded tech enthusiasts"
-          />
-          <BenefitCard
-            icon={<Mail className="w-6 h-6" />}
-            title="Opportunities"
-            description="Get notified about hackathons and events"
-          />
-        </motion.div>
-
-        {/* Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
-              <Input
-                label="Full Name"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                error={errors.name}
-                required
-              />
-
-              {/* Email & Phone */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Input
-                  label="Email Address"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  error={errors.email}
-                  required
-                />
-                <Input
-                  label="Phone Number"
-                  type="tel"
-                  placeholder="10-digit mobile number"
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phone: e.target.value })
-                  }
-                  error={errors.phone}
-                  required
-                />
-              </div>
-
-              {/* Semester & Course */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Semester <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.semester}
-                    onChange={(e) =>
-                      setFormData({ ...formData, semester: e.target.value })
-                    }
-                    className="w-full px-4 py-2 rounded-lg border bg-white dark:bg-dark-card border-gray-300 dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    required
-                  >
-                    <option value="">Select Semester</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
-                      <option key={sem} value={sem}>
-                        Semester {sem}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.semester && (
-                    <p className="mt-1 text-sm text-red-600">{errors.semester}</p>
-                  )}
+        <div className="grid md:grid-cols-2 gap-12 items-start">
+          {/* Contact Info */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-8"
+          >
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+              <h3 className="text-2xl font-semibold text-white mb-6">Contact Information</h3>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-purple-500/20 rounded-lg text-purple-400">
+                    <Mail className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Email</p>
+                    <a href="mailto:aimlclub@example.com" className="text-white hover:text-purple-400 transition-colors">
+                      aimlclub@example.com
+                    </a>
+                  </div>
                 </div>
-
-                <Input
-                  label="Course/Branch"
-                  placeholder="e.g., CSE, ECE, AI/ML"
-                  value={formData.course}
-                  onChange={(e) =>
-                    setFormData({ ...formData, course: e.target.value })
-                  }
-                  error={errors.course}
-                  required
-                />
+                {/* Add more contact info if needed */}
               </div>
+            </div>
+          </motion.div>
 
-              {/* Reason */}
-              <Textarea
-                label="Why do you want to join AIML Club?"
-                placeholder="Tell us about your interest in AI/ML and what you hope to gain..."
-                value={formData.reason}
-                onChange={(e) =>
-                  setFormData({ ...formData, reason: e.target.value })
-                }
-                error={errors.reason}
-                required
-                rows={5}
-              />
-
-              {/* Subscribe */}
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="subscribe"
-                  checked={formData.subscribe}
-                  onChange={(e) =>
-                    setFormData({ ...formData, subscribe: e.target.checked })
-                  }
-                  className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
-                />
-                <label htmlFor="subscribe" className="text-sm text-gray-700 dark:text-gray-300">
-                  Subscribe to receive updates about events and workshops
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10"
+          >
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                  Name
                 </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="text"
+                    id="name"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                    placeholder="Your name"
+                  />
+                </div>
               </div>
 
-              {/* Submit */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                isLoading={loading}
-                className="w-full"
-              >
-                <UserPlus className="w-5 h-5 mr-2" />
-                Submit Application
-              </Button>
-            </form>
-          </Card>
-        </motion.div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                    placeholder="your@email.com"
+                  />
+                </div>
+              </div>
 
-        {/* Info */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400"
-        >
-          <p>
-            Your application will be reviewed by our team. You&apos;ll receive a confirmation
-            email once your membership is approved.
-          </p>
-        </motion.div>
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
+                  Subject
+                </label>
+                <div className="relative">
+                  <MessageSquare className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="text"
+                    id="subject"
+                    required
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    className="w-full bg-black/20 border border-white/10 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                    placeholder="What is this about?"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  required
+                  rows={4}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all resize-none"
+                  placeholder="Your message..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center space-x-2"
+              >
+                {status === 'submitting' ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <span>Send Message</span>
+                    <Send className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+
+              {status === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center space-x-2 text-green-400 bg-green-500/10 p-3 rounded-lg"
+                >
+                  <CheckCircle className="w-5 h-5" />
+                  <span>Message sent successfully! We'll get back to you soon.</span>
+                </motion.div>
+              )}
+
+              {status === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center space-x-2 text-red-400 bg-red-500/10 p-3 rounded-lg"
+                >
+                  <AlertCircle className="w-5 h-5" />
+                  <span>{errorMessage || 'Failed to send message. Please try again.'}</span>
+                </motion.div>
+              )}
+            </form>
+          </motion.div>
+        </div>
       </div>
     </div>
-  );
-}
-
-function BenefitCard({ icon, title, description }: any) {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.05, y: -5 }}
-      transition={{ duration: 0.2 }}
-    >
-      <Card className="p-6 text-center h-full hover:shadow-xl transition-shadow">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-primary-100 to-secondary-100 dark:from-primary-900 dark:to-secondary-900 text-primary-600 dark:text-primary-400 mb-4">
-          {icon}
-        </div>
-        <h3 className="font-semibold mb-2 text-lg">{title}</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
-      </Card>
-    </motion.div>
   );
 }
