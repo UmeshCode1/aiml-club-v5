@@ -34,7 +34,7 @@ export default function Home() {
               </span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Join a community of forward-thinking students passionate about Artificial Intelligence and Machine Learning. Let's build the future together.
+              Join a community of forward-thinking students passionate about Artificial Intelligence and Machine Learning. Let&apos;s build the future together.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -110,7 +110,7 @@ export default function Home() {
             <div className="relative z-10">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to start your journey?</h2>
               <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-                Whether you're a beginner or an expert, there's a place for you in our club.
+                Whether you&apos;re a beginner or an expert, there&apos;s a place for you in our club.
               </p>
               <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform">
                 Join the Club <ChevronRight className="w-4 h-4" />

@@ -54,7 +54,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Have questions about the AI/ML Club? Want to collaborate? Send us a message and we'll get back to you properly.
+            Have questions about the AI/ML Club? Want to collaborate? Send us a message and we&apos;ll get back to you properly.
           </p>
         </motion.div>
 
@@ -184,7 +184,7 @@ export default function ContactPage() {
                   className="flex items-center space-x-2 text-green-400 bg-green-500/10 p-3 rounded-lg"
                 >
                   <CheckCircle className="w-5 h-5" />
-                  <span>Message sent successfully! We'll get back to you soon.</span>
+                  <span>Message sent successfully! We&apos;ll get back to you soon.</span>
                 </motion.div>
               )}
 
