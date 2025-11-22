@@ -60,17 +60,20 @@ export default function Home() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-6xl md:text-8xl font-display font-bold tracking-tight leading-tight">
+            <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight leading-tight">
               <span className="text-gradient-blue">AI</span>
-              <span className="text-gray-300 mx-4 font-light">&</span>
-              <span className="text-gradient-purple">ML</span>
+              <span className="text-gray-400 dark:text-gray-500 mx-2 md:mx-4 font-light">&</span>
+              <span className="text-gradient-purple">Machine Learning</span>
               <br />
-              <span className="text-white relative">
+              <span className="text-gray-900 dark:text-white relative inline-block mt-2">
                 Club
                 <motion.span
-                  className="absolute -top-6 -right-8 text-4xl"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute -top-4 -right-8 md:-top-6 md:-right-12 text-3xl md:text-5xl"
+                  animate={{
+                    rotate: [0, 10, -10, 0],
+                    y: [0, -5, 0]
+                  }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   🚀
                 </motion.span>
@@ -105,6 +108,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
+
           </motion.div>
         </div>
 
