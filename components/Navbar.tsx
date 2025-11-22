@@ -98,7 +98,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group relative z-50">
+          <Link href="/" className="flex items-center space-x-3 group relative z-[80]">
             <div className="relative w-10 h-10 transition-transform duration-300 group-hover:scale-110">
               <Image
                 src="https://fra.cloud.appwrite.io/v1/storage/buckets/691f19dd000afea07882/files/aiml-logo/view?project=691e2b31003e6415bb4f"
@@ -207,7 +207,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-700 dark:text-gray-300 relative z-50"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-700 dark:text-gray-300 relative z-[80]"
             aria-label="Toggle menu"
             aria-expanded={isOpen}
           >
@@ -219,7 +219,7 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm md:hidden z-40"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm md:hidden z-[60]"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -228,7 +228,7 @@ export default function Navbar() {
       {/* Mobile Menu Panel */}
       <div
         className={cn(
-          "fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-white dark:bg-gray-950 md:hidden z-40 transform transition-transform duration-300 ease-out shadow-2xl",
+          "fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-white dark:bg-gray-950 md:hidden z-[70] transform transition-transform duration-300 ease-out shadow-2xl overflow-hidden",
           isOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
