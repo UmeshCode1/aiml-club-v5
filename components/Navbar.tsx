@@ -216,133 +216,135 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm md:hidden z-[60]"
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
-      )}
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm md:hidden"
+            style={{ zIndex: 9998 }}
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
 
-      {/* Mobile Menu Panel */}
-      <div
-        className={cn(
-          "fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-white dark:bg-gray-950 md:hidden z-[70] transform transition-transform duration-300 ease-out shadow-2xl overflow-hidden",
-          isOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
-        <div className="flex flex-col h-full pt-20 pb-6 overflow-y-auto">
-          {/* Mobile Links */}
-          <div className="flex-1 px-6 space-y-2">
-            {links.map((link, idx) => (
-              <div key={link.label} style={{ animationDelay: `${idx * 50}ms` }}>
-                {link.children ? (
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => setMobileResourcesOpen(!mobileResourcesOpen)}
-                      className="flex items-center justify-between w-full px-4 py-4 rounded-xl text-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
-                    >
-                      {link.label}
-                      <ChevronDown className={cn("w-5 h-5 transition-transform", mobileResourcesOpen && "rotate-180")} />
-                    </button>
-                    <div className={cn(
-                      "space-y-1 overflow-hidden transition-all duration-300",
-                      mobileResourcesOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                    )}>
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.label}
-                          href={child.href}
-                          target={child.external ? '_blank' : undefined}
-                          rel={child.external ? 'noopener noreferrer' : undefined}
-                          onClick={() => {
-                            setIsOpen(false);
-                            setMobileResourcesOpen(false);
-                          }}
-                          className="block px-8 py-3 text-base text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
+          {/* Menu Panel */}
+          <div
+            className="fixed top-0 right-0 bottom-0 w-full sm:w-80 bg-white dark:bg-gray-950 md:hidden shadow-2xl overflow-hidden animate-slide-in-right"
+            style={{ zIndex: 9999 }}
+          >
+            <div className="flex flex-col h-full pt-20 pb-6 overflow-y-auto">
+              {/* Mobile Links */}
+              <div className="flex-1 px-6 space-y-2">
+                {links.map((link, idx) => (
+                  <div key={link.label}>
+                    {link.children ? (
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => setMobileResourcesOpen(!mobileResourcesOpen)}
+                          className="flex items-center justify-between w-full px-4 py-4 rounded-xl text-lg font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
                         >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={cn(
-                      'block px-4 py-4 rounded-xl text-lg font-medium transition-all',
-                      pathname === link.href
-                        ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
+                          {link.label}
+                          <ChevronDown className={cn("w-5 h-5 transition-transform", mobileResourcesOpen && "rotate-180")} />
+                        </button>
+                        <div className={cn(
+                          "space-y-1 overflow-hidden transition-all duration-300",
+                          mobileResourcesOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                        )}>
+                          {link.children.map((child) => (
+                            <Link
+                              key={child.label}
+                              href={child.href}
+                              target={child.external ? '_blank' : undefined}
+                              rel={child.external ? 'noopener noreferrer' : undefined}
+                              onClick={() => {
+                                setIsOpen(false);
+                                setMobileResourcesOpen(false);
+                              }}
+                              className="block px-8 py-3 text-base text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className={cn(
+                          'block px-4 py-4 rounded-xl text-lg font-medium transition-all',
+                          pathname === link.href
+                            ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5'
+                        )}
+                      >
+                        {link.label}
+                      </Link>
                     )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile Footer */}
+              <div className="px-6 pt-6 mt-6 border-t border-gray-200 dark:border-gray-800 space-y-4">
+                {/* Theme Toggle */}
+                <div className="flex items-center justify-between px-4">
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Theme</span>
+                  <button
+                    onClick={toggleTheme}
+                    className="p-3 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 flex items-center gap-3"
                   >
-                    {link.label}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile Footer */}
-          <div className="px-6 pt-6 mt-6 border-t border-gray-200 dark:border-gray-800 space-y-4">
-            {/* Theme Toggle */}
-            <div className="flex items-center justify-between px-4">
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Theme</span>
-              <button
-                onClick={toggleTheme}
-                className="p-3 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 flex items-center gap-3"
-              >
-                {resolvedTheme === 'dark' ? (
-                  <>
-                    <Sun className="w-5 h-5 text-yellow-400" />
-                    <span className="text-sm font-medium">Light</span>
-                  </>
-                ) : (
-                  <>
-                    <Moon className="w-5 h-5" />
-                    <span className="text-sm font-medium">Dark</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* User Section */}
-            {user ? (
-              <div className="space-y-4">
-                <div className="px-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 font-bold">
-                    {user.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
-                  </div>
+                    {resolvedTheme === 'dark' ? (
+                      <>
+                        <Sun className="w-5 h-5 text-yellow-400" />
+                        <span className="text-sm font-medium">Light</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="w-5 h-5" />
+                        <span className="text-sm font-medium">Dark</span>
+                      </>
+                    )}
+                  </button>
                 </div>
-                <Button
-                  onClick={() => {
-                    logout();
-                    setIsOpen(false);
-                  }}
-                  className="w-full justify-center py-4 rounded-xl"
-                  variant="outline"
-                >
-                  Logout
-                </Button>
+
+                {/* User Section */}
+                {user ? (
+                  <div className="space-y-4">
+                    <div className="px-4 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 font-bold">
+                        {user.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        logout();
+                        setIsOpen(false);
+                      }}
+                      className="w-full justify-center py-4 rounded-xl"
+                      variant="outline"
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  !isAdminRoute && (
+                    <Link href="/admin/login" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full justify-center py-4 rounded-xl" variant="primary">
+                        Admin Login
+                      </Button>
+                    </Link>
+                  )
+                )}
               </div>
-            ) : (
-              !isAdminRoute && (
-                <Link href="/admin/login" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full justify-center py-4 rounded-xl" variant="primary">
-                    Admin Login
-                  </Button>
-                </Link>
-              )
-            )}
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </nav>
   );
 }
