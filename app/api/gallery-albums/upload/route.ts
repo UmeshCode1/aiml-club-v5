@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { storage } from '@/lib/appwrite';
-import { ID, InputFile } from 'node-appwrite';
+import { ID } from 'node-appwrite';
+import { InputFile } from 'node-appwrite/file';
 
 const BUCKET_ID = 'gallery';
 

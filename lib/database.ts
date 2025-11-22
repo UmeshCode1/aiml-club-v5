@@ -2,7 +2,7 @@ import { ID, Query } from 'appwrite';
 import { databases, storage, DATABASE_ID, COLLECTIONS, BUCKETS } from './appwrite';
 
 // Re-export for convenience
-export { BUCKETS, COLLECTIONS, DATABASE_ID };
+export { databases, storage, BUCKETS, COLLECTIONS, DATABASE_ID };
 
 // ==================== EVENTS ====================
 
