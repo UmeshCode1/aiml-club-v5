@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20">
+      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-32">
         {/* Background Parallax Elements */}
         <motion.div style={{ y: y1, opacity }} className="absolute top-20 left-[10%] w-72 h-72 bg-primary-500/20 rounded-full blur-[100px] pointer-events-none" />
         <motion.div style={{ y: y2, opacity }} className="absolute bottom-20 right-[10%] w-96 h-96 bg-secondary-500/20 rounded-full blur-[100px] pointer-events-none" />
@@ -80,19 +80,19 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-400 font-medium max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 font-medium max-w-3xl mx-auto">
               Oriental College of Technology, Bhopal
             </p>
 
-            <div className="flex items-center justify-center gap-3 text-lg md:text-xl font-medium text-gray-300">
-              <span className="px-4 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">Innovate</span>
-              <span className="w-1 h-1 bg-gray-600 rounded-full" />
-              <span className="px-4 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Implement</span>
-              <span className="w-1 h-1 bg-gray-600 rounded-full" />
-              <span className="px-4 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Inspire</span>
+            <div className="flex items-center justify-center gap-3 text-lg md:text-xl font-medium text-gray-500 dark:text-gray-300">
+              <span className="px-4 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">Innovate</span>
+              <span className="w-1 h-1 bg-gray-400 dark:bg-gray-600 rounded-full" />
+              <span className="px-4 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">Implement</span>
+              <span className="w-1 h-1 bg-gray-400 dark:bg-gray-600 rounded-full" />
+              <span className="px-4 py-1 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">Inspire</span>
             </div>
 
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Join us in exploring the fascinating world of Artificial Intelligence and Machine Learning. Learn, build, and innovate together.
             </p>
 
@@ -121,7 +121,7 @@ export default function Home() {
         >
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs text-gray-500 uppercase tracking-widest">Scroll</span>
-            <div className="w-6 h-10 border-2 border-white/10 rounded-full flex justify-center p-1 bg-white/5 backdrop-blur-sm">
+            <div className="w-6 h-10 border-2 border-gray-300 dark:border-white/10 rounded-full flex justify-center p-1 bg-white/5 backdrop-blur-sm">
               <div className="w-1 h-2 bg-primary-500 rounded-full animate-bounce" />
             </div>
           </div>
