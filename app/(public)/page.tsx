@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Calendar, Users, Code, Brain, ChevronRight } from 'lucide-react';
+import InaugurationCarousel from '@/components/InaugurationCarousel';
 
 export default function Home() {
   return (
@@ -100,6 +101,21 @@ export default function Home() {
             <div className="w-1 h-2 bg-white/50 rounded-full animate-bounce" />
           </div>
         </motion.div>
+      {/* Inauguration Carousel */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Club Inauguration
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Relive the memorable moments from our club&apos;s grand inauguration ceremony
+            </p>
+          </div>
+          <InaugurationCarousel />
+        </div>
+      </section>
+
       </section>
 
       {/* Features Grid */}
@@ -194,4 +210,6 @@ function StatItem({ number, label, delay }: { number: string; label: string; del
     </motion.div>
   );
 }
+
+
 
