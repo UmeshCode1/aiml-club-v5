@@ -1,17 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { databases, COLLECTIONS, subscribeToCollection, getPreviewUrl } from '@/lib/appwrite';
+import { databases, COLLECTIONS, subscribeToCollection } from '@/lib/appwrite';
 import { Query } from 'appwrite';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { Calendar, MapPin, Clock, ArrowRight, ExternalLink, User, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Calendar, MapPin, Clock, ExternalLink, Sparkles, Image as ImageIcon, Award } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { highlightService, Highlight } from '@/lib/database';
 import Link from 'next/link';
-
+import { motion } from 'framer-motion';
 
 interface Event {
   $id: string;
@@ -20,6 +19,7 @@ interface Event {
   endDate?: string;
   description: string;
   posterUrl?: string;
+  posterId?: string;
   registrationLink?: string;
   status: 'upcoming' | 'ongoing' | 'completed';
   venue?: string;
@@ -30,6 +30,17 @@ interface Event {
   certificateDriveLink?: string;
 }
 
+interface Highlight {
+  $id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  imageId?: string;
+  category: string;
+  isPublished: boolean;
+  resourceLink?: string;
+}
+
 type Tab = 'upcoming' | 'past' | 'highlights';
 
 export default function EventsPage() {
@@ -37,6 +48,36 @@ export default function EventsPage() {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('upcoming');
+
+  useEffect(() => {
+    fetchData();
+
+    // Subscribe to real-time updates
+    const unsubscribeEvents = subscribeToCollection(COLLECTIONS.EVENTS, (response) => {
+      if (response.events.includes('databases.*.collections.*.documents.*.create')) {
+        setEvents(prev => [response.payload as Event, ...prev]);
+      } else if (response.events.includes('databases.*.collections.*.documents.*.update')) {
+        setEvents(prev => prev.map(e => e.$id === response.payload.$id ? response.payload as Event : e));
+      } else if (response.events.includes('databases.*.collections.*.documents.*.delete')) {
+        setEvents(prev => prev.filter(e => e.$id !== response.payload.$id));
+      }
+    });
+
+    const unsubscribeHighlights = subscribeToCollection(COLLECTIONS.HIGHLIGHTS, (response) => {
+      if (response.events.includes('databases.*.collections.*.documents.*.create')) {
+        setHighlights(prev => [response.payload as Highlight, ...prev]);
+      } else if (response.events.includes('databases.*.collections.*.documents.*.update')) {
+        setHighlights(prev => prev.map(h => h.$id === response.payload.$id ? response.payload as Highlight : h));
+      } else if (response.events.includes('databases.*.collections.*.documents.*.delete')) {
+        setHighlights(prev => prev.filter(h => h.$id !== response.payload.$id));
+      }
+    });
+
+    return () => {
+      unsubscribeEvents();
+      unsubscribeHighlights();
+    };
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -51,261 +92,309 @@ export default function EventsPage() {
       );
       setEvents(eventsResponse.documents as unknown as Event[]);
 
-      // Fetch Highlights (only if collection ID is configured)
-      if (COLLECTIONS.HIGHLIGHTS) {
-        try {
-          const highlightsResponse = await highlightService.list();
-          setHighlights(highlightsResponse.documents as unknown as Highlight[]);
-        } catch (e) {
-          console.warn('Failed to fetch highlights:', e);
-        }
-      }
+      // Fetch Highlights
+      const highlightsResponse = await databases.listDocuments(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+        COLLECTIONS.HIGHLIGHTS,
+        [
+          Query.equal('isPublished', true),
+          Query.limit(6)
+        ]
+      );
+      setHighlights(highlightsResponse.documents as unknown as Highlight[]);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
+  const upcomingEvents = events.filter(e => {
+    const eventDate = new Date(e.startDate);
+    const now = new Date();
+    return eventDate >= now || e.status === 'upcoming';
+  });
 
-    // Real-time subscription for Events
-    const unsubscribeEvents = subscribeToCollection(COLLECTIONS.EVENTS, (response) => {
-      const { events: eventTypes, payload } = response;
-      if (eventTypes.some(e => e.includes('create'))) {
-        setEvents(prev => [payload as Event, ...prev].sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()));
-      } else if (eventTypes.some(e => e.includes('update'))) {
-        setEvents(prev => prev.map(e => e.$id === payload.$id ? payload as Event : e));
-      } else if (eventTypes.some(e => e.includes('delete'))) {
-        setEvents(prev => prev.filter(e => e.$id !== payload.$id));
-      }
-    });
-
-    // Real-time subscription for Highlights (optional)
-    let unsubscribeHighlights = () => { };
-    if (COLLECTIONS.HIGHLIGHTS) {
-      unsubscribeHighlights = subscribeToCollection(COLLECTIONS.HIGHLIGHTS, (response) => {
-        const { events: eventTypes, payload } = response;
-        if (eventTypes.some(e => e.includes('create'))) {
-          setHighlights(prev => [payload as Highlight, ...prev]);
-        } else if (eventTypes.some(e => e.includes('update'))) {
-          setHighlights(prev => prev.map(h => h.$id === payload.$id ? payload as Highlight : h));
-        } else if (eventTypes.some(e => e.includes('delete'))) {
-          setHighlights(prev => prev.filter(h => h.$id !== payload.$id));
-        }
-      });
-    }
-
-    return () => {
-      unsubscribeEvents();
-      unsubscribeHighlights();
-    };
-  }, []);
-
-  const upcomingEvents = events.filter(e => new Date(e.startDate) >= new Date() || e.status === 'upcoming');
-  const pastEvents = events.filter(e => new Date(e.startDate) < new Date() && e.status !== 'upcoming');
+  const pastEvents = events.filter(e => {
+    const eventDate = new Date(e.startDate);
+    const now = new Date();
+    return eventDate < now && e.status !== 'upcoming';
+  });
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Open':
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-600 dark:text-green-400 border border-green-500/30">Registration Open</span>;
-      case 'Closed':
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30">Closed</span>;
-      case 'Completed':
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-500/20 text-gray-600 dark:text-gray-400 border border-gray-500/30">Completed</span>;
-      default:
-        return null;
-    }
+    const badges = {
+      upcoming: 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30',
+      ongoing: 'bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30',
+      completed: 'bg-gray-500/20 text-gray-600 dark:text-gray-400 border-gray-500/30'
+    };
+
+    const labels = {
+      upcoming: 'Upcoming',
+      ongoing: 'Ongoing',
+      completed: 'Completed'
+    };
+
+    return (
+      <span className={cn('px-3 py-1 rounded-full text-xs font-bold border', badges[status as keyof typeof badges] || badges.upcoming)}>
+        {labels[status as keyof typeof labels] || status}
+      </span>
+    );
   };
 
   if (loading) {
     return (
       <div className="min-h-screen pt-24 pb-12 px-4 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[400px] rounded-2xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h-[450px] rounded-2xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
           ))}
         </div>
       </div>
     );
   }
 
+  const displayEvents = activeTab === 'upcoming' ? upcomingEvents : activeTab === 'past' ? pastEvents : [];
+
   return (
-    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
-        <div>
+    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
           <h1 className="text-4xl md:text-5xl font-display font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent mb-4">
             Events & Highlights
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
-            Discover our workshops, hackathons, and stories from the community.
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Discover our exciting events, workshops, and memorable moments
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl overflow-x-auto max-w-full">
-          <button
-            onClick={() => setActiveTab('upcoming')}
-            className={cn(
-              "px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
-              activeTab === 'upcoming'
-                ? "bg-white dark:bg-gray-700 shadow-sm text-primary-600 dark:text-primary-400"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            )}
-          >
-            Upcoming
-          </button>
-          <button
-            onClick={() => setActiveTab('past')}
-            className={cn(
-              "px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
-              activeTab === 'past'
-                ? "bg-white dark:bg-gray-700 shadow-sm text-primary-600 dark:text-primary-400"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            )}
-          >
-            Past Archives
-          </button>
-          <button
-            onClick={() => setActiveTab('highlights')}
-            className={cn(
-              "px-4 sm:px-6 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex items-center gap-2",
-              activeTab === 'highlights'
-                ? "bg-white dark:bg-gray-700 shadow-sm text-primary-600 dark:text-primary-400"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            )}
-          >
-            <Sparkles className="w-4 h-4" />
-            Highlights
-          </button>
-        </div>
-      </div>
+        {/* Tabs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex flex-wrap justify-center gap-3 mb-12"
+        >
+          {[
+            { id: 'upcoming', label: 'Upcoming Events', icon: Calendar },
+            { id: 'past', label: 'Past Events', icon: Clock },
+            { id: 'highlights', label: 'Highlights', icon: Sparkles }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as Tab)}
+              className={cn(
+                'flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300',
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white shadow-lg shadow-primary-500/30'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+              )}
+            >
+              <tab.icon className="w-5 h-5" />
+              {tab.label}
+            </button>
+          ))}
+        </motion.div>
 
-      {/* Content Rendering */}
-      {activeTab === 'highlights' ? (
-        // Highlights Grid
-        highlights.length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-200 dark:border-white/10">
-            <Sparkles className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No highlights yet</h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              We&apos;ll be sharing exciting stories and updates soon!
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {highlights.map((highlight) => (
-              <Card key={highlight.$id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-900/50 h-full flex flex-col">
-                {/* Highlight Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4 text-primary-500" />
-                      <span>{format(new Date(highlight.date), 'MMM d, yyyy')}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <User className="w-4 h-4 text-secondary-500" />
-                      <span>{highlight.author}</span>
-                    </div>
-                  </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                    {highlight.title}
-                  </h3>
-
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3 flex-1">
-                    {highlight.excerpt}
-                  </p>
-
-                  <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                    {/* Using Link if we have a details page, otherwise just visual */}
-                    {/* Assuming we might want to link to a details page later, for now just a button-like look */}
-                    <div className="flex items-center text-primary-600 dark:text-primary-400 font-medium group-hover:gap-2 transition-all cursor-pointer">
-                      Read Story
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </div>
-              </Card>
+        {/* Content */}
+        {activeTab === 'highlights' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {highlights.map((highlight, index) => (
+              <HighlightCard key={highlight.$id} highlight={highlight} index={index} />
             ))}
-          </div>
-        )
-      ) : (
-        // Events Grid (Upcoming or Past)
-        (activeTab === 'upcoming' ? upcomingEvents : pastEvents).length === 0 ? (
-          <div className="text-center py-20 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-200 dark:border-white/10">
-            <Calendar className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No events found</h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              {activeTab === 'past' ? "No past events in the archive." : "Stay tuned! New events are coming soon."}
-            </p>
+            {highlights.length === 0 && (
+              <div className="col-span-full text-center py-20">
+                <Sparkles className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No highlights yet</h3>
+                <p className="text-gray-500 dark:text-gray-400">Check back soon for amazing moments!</p>
+              </div>
+            )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {(activeTab === 'upcoming' ? upcomingEvents : pastEvents).map((event) => (
-              <Card key={event.$id} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-900/50">
-                {/* Image */}
-                <div className="relative h-48 w-full overflow-hidden">
-                  <Image
-                    src={event.posterUrl || '/placeholder-event.jpg'}
-                    alt={event.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
-                  <div className="absolute top-4 right-4">
-                    {getStatusBadge(event.status)}
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 mb-3 font-medium">
-                    <Calendar className="w-4 h-4" />
-                    {format(new Date(event.startDate), 'MMMM d, yyyy')}
-                  </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-                    {event.name}
-                  </h3>
-
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 line-clamp-3">
-                    {event.description}
-                  </p>
-
-                  {/* Action Buttons */}
-                  <div className="mt-auto space-y-3">
-                    {event.status === 'upcoming' ? (
-                      <a
-                        href={event.registrationLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block w-full"
-                      >
-                        <Button className="w-full group/btn" variant="primary">
-                          Register Now
-                          <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
-                        </Button>
-                      </a>
-                    ) : event.status === 'Closed' ? (
-                      <Button className="w-full cursor-not-allowed opacity-70" disabled>
-                        Registration Closed
-                      </Button>
-                    ) : (
-                      <Button className="w-full" variant="secondary" disabled>
-                        View Photos
-                        <ExternalLink className="w-3 h-3 ml-2 opacity-50" />
-                      </Button>
-                      </a>
-                    )}
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayEvents.map((event, index) => (
+              <EventCard key={event.$id} event={event} index={index} getStatusBadge={getStatusBadge} />
+            ))}
+            {displayEvents.length === 0 && (
+              <div className="col-span-full text-center py-20">
+                <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  No {activeTab} events
+                </h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {activeTab === 'upcoming' ? 'Stay tuned for upcoming events!' : 'No past events to display.'}
+                </p>
               </div>
-              </Card>
-        ))}
+            )}
+          </div>
+        )}
+      </div>
     </div>
-  )
-      )
+  );
 }
-    </div >
+
+function EventCard({ event, index, getStatusBadge }: { event: Event; index: number; getStatusBadge: (status: string) => JSX.Element }) {
+  const [imageError, setImageError] = useState(false);
+
+  const getImageUrl = () => {
+    if (imageError || !event.posterUrl) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(event.name)}&background=7c3aed&color=fff&size=600&bold=true`;
+    }
+    return event.posterUrl;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+    >
+      <Card hover className="group overflow-hidden h-full flex flex-col bg-gradient-to-br from-gray-900/50 to-gray-800/30">
+        {/* Image */}
+        <div className="relative h-56 w-full overflow-hidden bg-gradient-to-br from-purple-900/20 to-blue-900/20">
+          <Image
+            src={getImageUrl()}
+            alt={event.name}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            onError={() => setImageError(true)}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent" />
+
+          {/* Status Badge */}
+          <div className="absolute top-4 right-4 z-10">
+            {getStatusBadge(event.status)}
+          </div>
+
+          {/* Category Badge */}
+          <div className="absolute top-4 left-4 z-10">
+            <span className="px-3 py-1 rounded-full bg-white/90 dark:bg-gray-900/90 text-xs font-bold text-gray-900 dark:text-white backdrop-blur-sm">
+              {event.category}
+            </span>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 flex flex-col p-6">
+          <h3 className="text-xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-blue-400 transition-all">
+            {event.name}
+          </h3>
+
+          <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+            {event.description}
+          </p>
+
+          {/* Event Details */}
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Calendar className="w-4 h-4 text-primary-400" />
+              <span>{format(new Date(event.startDate), 'MMM dd, yyyy')}</span>
+            </div>
+            {event.venue && (
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <MapPin className="w-4 h-4 text-primary-400" />
+                <span className="line-clamp-1">{event.venue}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-auto flex flex-wrap gap-2">
+            {event.registrationLink && event.status === 'upcoming' && (
+              <Link href={event.registrationLink} target="_blank" rel="noopener noreferrer" className="flex-1">
+                <Button size="sm" variant="primary" className="w-full">
+                  Register Now
+                </Button>
+              </Link>
+            )}
+            {event.driveMemoriesLink && (
+              <Link href={event.driveMemoriesLink} target="_blank" rel="noopener noreferrer" className="flex-1">
+                <Button size="sm" variant="outline" className="w-full">
+                  <ImageIcon className="w-4 h-4 mr-2" />
+                  Memories
+                </Button>
+              </Link>
+            )}
+            {event.certificateDriveLink && (
+              <Link href={event.certificateDriveLink} target="_blank" rel="noopener noreferrer" className="flex-1">
+                <Button size="sm" variant="outline" className="w-full">
+                  <Award className="w-4 h-4 mr-2" />
+                  Certificates
+                </Button>
+              </Link>
+            )}
+            {event.resourceLink && (
+              <Link href={event.resourceLink} target="_blank" rel="noopener noreferrer" className="flex-1">
+                <Button size="sm" variant="outline" className="w-full">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Resources
+                </Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
+
+function HighlightCard({ highlight, index }: { highlight: Highlight; index: number }) {
+  const [imageError, setImageError] = useState(false);
+
+  const getImageUrl = () => {
+    if (imageError || !highlight.imageUrl) {
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(highlight.title)}&background=random&size=600`;
+    }
+    return highlight.imageUrl;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.1 }}
+    >
+      <Card hover className="group overflow-hidden h-full flex flex-col bg-gradient-to-br from-gray-900/50 to-gray-800/30">
+        <div className="relative h-56 w-full overflow-hidden">
+          <Image
+            src={getImageUrl()}
+            alt={highlight.title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            onError={() => setImageError(true)}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent" />
+
+          <div className="absolute top-4 left-4 z-10">
+            <span className="px-3 py-1 rounded-full bg-yellow-500/90 text-xs font-bold text-gray-900 backdrop-blur-sm flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              Highlight
+            </span>
+          </div>
+        </div>
+
+        <div className="flex-1 flex flex-col p-6">
+          <h3 className="text-lg font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-400 transition-all">
+            {highlight.title}
+          </h3>
+          <p className="text-sm text-gray-400 line-clamp-3 mb-4">
+            {highlight.description}
+          </p>
+
+          {highlight.resourceLink && (
+            <Link href={highlight.resourceLink} target="_blank" rel="noopener noreferrer" className="mt-auto">
+              <Button size="sm" variant="outline" className="w-full">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View More
+              </Button>
+            </Link>
+          )}
+        </div>
+      </Card>
+    </motion.div>
   );
 }
