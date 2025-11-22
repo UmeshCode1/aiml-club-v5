@@ -141,20 +141,7 @@ export default function ContactPage() {
                   Oriental College of Technology,<br />
                   Raisen Road, Bhopal, Madhya Pradesh
                 </p>
-              </div>          {/* Google Maps */}
-          <div className=\"rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 shadow-lg mt-8\">
-            <iframe
-              src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3666.7267!2d77.4247!3d23.2156!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397c428f8fd68fbd%3A0x2155716b572d4f8!2sOriental%20College%20of%20Technology!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin\"
-              width=\"100%\"
-              height=\"300\"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading=\"lazy\"
-              referrerPolicy=\"no-referrer-when-downgrade\"
-              className=\"w-full\"
-            ></iframe>
-          </div>
-
+              </div>
             </div>
           </div>
 
@@ -189,4 +176,3 @@ export default function ContactPage() {
     </div>
   );
 }
-
